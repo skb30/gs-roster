@@ -30,6 +30,7 @@ def init_posts(shift):
 
     days = {
     "Gates" : {
+        post: ["Charlie 1","Charlie 1","Charlie 1"]
         "Charlie 1": "Vacant",
         "Charlie 2": "Vacant",
         "Charlie 3": "Vacant",
@@ -37,24 +38,15 @@ def init_posts(shift):
 
     },
     "Booths": {
-        "Wofle 1": "Vacant",
-        "Wofle 2": "Vacant",
-        "Tantau 1": "Vacant",
+        post: ["Wofle 1","Wofle 2","Tantau 1"],
         "fill" : "3"
     },
     "Mobiles" : {
-        "Paul 1" : "Vacant",
-        "Paul 2" : "Vacant",
-        "Paul 3" : "Vacant",
-        "Paul 4" : "Vacant",
+        post : ["Paul 1", "Paul 2", "Paul 3", "Paul 4"],
         "fill" : "2"
     },
     "Edwards": {
-        "Edward 1": "Vacant",
-        "Edward 2": "Vacant",
-        "Edward 3": "Vacant",
-        "Edward 4": "Vacant",
-        "Edward 5": "Vacant",
+        post : ["Edward 1","Edward 2","Edward 3","Edward 3","Edward 5"],
         "fill" : "0"
     }
 
