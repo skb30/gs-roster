@@ -86,6 +86,7 @@ def create_roster(staff, posts):
     # collect position types and get their priortiy and fill numbers
 
     # sort by priority
+    # sorted_x = sorted(posts.items(), key=operator.itemgetter("Priority"))
     sorted_x = sorted(posts.items(), key=operator.itemgetter("Priority"))
 
 

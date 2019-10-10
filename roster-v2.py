@@ -9,9 +9,9 @@ import csv
 # create the staff hat
 
 # create the must-fill hat
-# If there's staff leftover then create the what's left hat 
+
 # process the must-fill hat. If there's anything left over then
-# process the whats-left hat
+# create the what's left hat and process it 
 
 
 # logic
@@ -40,16 +40,14 @@ def init_posts(shift):
         "Wofle 1": "Vacant",
         "Wofle 2": "Vacant",
         "Tantau 1": "Vacant",
-        "3": "Fill",
-        "1" : "Priority"
+        "fill" : "3"
     },
     "Mobiles" : {
         "Paul 1" : "Vacant",
         "Paul 2" : "Vacant",
         "Paul 3" : "Vacant",
         "Paul 4" : "Vacant",
-        "2" : "Fill",
-        "2" : "Priority"
+        "fill" : "2"
     },
     "Edwards": {
         "Edward 1": "Vacant",
@@ -57,8 +55,7 @@ def init_posts(shift):
         "Edward 3": "Vacant",
         "Edward 4": "Vacant",
         "Edward 5": "Vacant",
-        "1" : "Fill",
-        "2" : "Priority"
+        "fill" : "0"
     }
 
 }
@@ -101,34 +98,35 @@ def init_posts(shift):
     return days
 def create_roster(staff, posts):
 
+    shuffle(staff)
+    must_fill = {}
+    
     # get the group of positions 
     position_types = list(posts.keys()) # convert to list for shuffle
-    shuffle(position_types)
+
+    # shuffle(position_types)
     
     i = 0
+    # create the must_fill hat
     for position_type in position_types:
+        must_fill[position_type] = posts[position_type]["fill"]
+
+    # process the "must-fill" hat
+     
+    for position_type, numberToFill in must_fill.items():
 
         # get the positions for this type
         positions = list(posts[position_type])
-        shuffle(positions)
-        # if position_type != "Edwards":
-        #     shuffle(positions)
-        # assign staff to the position
-        for position in positions:
-            if i < len(staff):
-                if posts[position_type][position] == 'Fill' or posts[position_type][position] == 'Priority':
-                    # print("Fill = {}".format(posts[position_type][position]))
-                    break
-                posts[position_type][position] = staff[i]
-                i += 1
-
-    # for position in posts.keys():
-    #     for unit in posts[position]:
-    
-    #         if posts[position][unit] != 'ID':
-    #             posts[position][unit] = staff[i]
-    #             i += 1
+        j = 0
+        if i < len(staff):
+            while j < int(numberToFill):
+                posts[position_type][positions[j]] = staff.pop()
                 # staff.remove(staff[i])
+                i += 1
+                j += 1
+        else:
+            print("No more staff.")
+        # print(x, y)
 
     return posts
 
