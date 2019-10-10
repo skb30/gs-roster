@@ -89,12 +89,13 @@ def create_roster(staff, posts):
 
     shuffle(staff)
     must_fill = {}
+    must_fill_roaster = []
     
+
     # print(posts["Gates"]["post"][1])
 
     # get the group of positions 
-    position_types = list(posts.keys()) # convert to list for shuffle
-
+    position_types = list(posts.keys()) 
     shuffle(position_types)
     
     staffCount = 0
@@ -105,15 +106,19 @@ def create_roster(staff, posts):
     # process the "must-fill" hat
      
     for position_type, numberToFill in must_fill.items():
+        x = int(numberToFill)
+        position  = posts[position_type]["post"]
     #     print("position_type {} numberToFill {} ".format(position_type, numberToFill))
         # get the positions for this type
         # positions = posts[position_type]["post"]
         j = 0
-        while int(numberToFill) != 0: 
-            posts[position_type]["post"][j] = staff.pop()
+
+        must_fill_roaster.append(position_type)
+        while x != 0: 
+            must_fill_roaster.append({position[j] : staff.pop()}) 
             j += 1
             # staffCount += 1
-            numberToFill -= 1
+            x -= 1
         # j = 0
         # if staffCount < len(staff):
         #     for position in positions:
