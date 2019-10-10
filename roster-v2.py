@@ -30,20 +30,20 @@ def init_posts(shift):
 
     days = {
     "Gates" : {
-        post : ["Charlie 1","Charlie 1","Charlie 1"],
+        "post" : ["Charlie 1","Charlie 2","Charlie 3"],
         "fill" : "3"
 
     },
     "Booths": {
-        post: ["Wofle 1","Wofle 2","Tantau 1"],
+        "post" : ["Wofle 1","Wofle 2","Tantau 1"],
         "fill" : "3"
     },
     "Mobiles" : {
-        post : ["Paul 1", "Paul 2", "Paul 3", "Paul 4"],
+        "post" : ["Paul 1", "Paul 2", "Paul 3", "Paul 4"],
         "fill" : "2"
     },
     "Edwards": {
-        post : ["Edward 1","Edward 2","Edward 3","Edward 3","Edward 5"],
+        "post" : ["Edward 1","Edward 2","Edward 3","Edward 3","Edward 5"],
         "fill" : "0"
     }
 
@@ -90,12 +90,14 @@ def create_roster(staff, posts):
     shuffle(staff)
     must_fill = {}
     
+    # print(posts["Gates"]["post"][1])
+
     # get the group of positions 
     position_types = list(posts.keys()) # convert to list for shuffle
 
-    # shuffle(position_types)
+    shuffle(position_types)
     
-    i = 0
+    staffCount = 0
     # create the must_fill hat
     for position_type in position_types:
         must_fill[position_type] = posts[position_type]["fill"]
@@ -103,18 +105,23 @@ def create_roster(staff, posts):
     # process the "must-fill" hat
      
     for position_type, numberToFill in must_fill.items():
-
+    #     print("position_type {} numberToFill {} ".format(position_type, numberToFill))
         # get the positions for this type
-        positions = list(posts[position_type])
+        # positions = posts[position_type]["post"]
         j = 0
-        if i < len(staff):
-            while j < int(numberToFill):
-                posts[position_type][positions[j]] = staff.pop()
-                # staff.remove(staff[i])
-                i += 1
-                j += 1
-        else:
-            print("No more staff.")
+        while int(numberToFill) != 0: 
+            posts[position_type]["post"][j] = staff.pop()
+            j += 1
+            # staffCount += 1
+            numberToFill -= 1
+        # j = 0
+        # if staffCount < len(staff):
+        #     for position in positions:
+        #         posts[position_type][position[j]] = staff.pop()
+        #         staffCount += 1
+        #         j += 1
+        # else:
+        #     print("No more staff.")
         # print(x, y)
 
     return posts
