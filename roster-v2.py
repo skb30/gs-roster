@@ -30,10 +30,7 @@ def init_posts(shift):
 
     days = {
     "Gates" : {
-        post: ["Charlie 1","Charlie 1","Charlie 1"]
-        "Charlie 1": "Vacant",
-        "Charlie 2": "Vacant",
-        "Charlie 3": "Vacant",
+        post : ["Charlie 1","Charlie 1","Charlie 1"],
         "fill" : "3"
 
     },
