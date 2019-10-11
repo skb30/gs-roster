@@ -13,49 +13,71 @@ import csv
 # process the must-fill hat. If there's anything left over then
 # create the what's left hat and process it 
 
-
-rosters = {
-    "day_priority_roster" : {
-        "Gates" : {
-            "Charlie 1" : "Vacant",
-            "Charlie 2" : "Vacant",
-            "Charlie 3" : "Vacant"
-        },
-        "Booths": {
-            "Wofle 1" : "Vacant",
-            "Wofle 2" : "Vacant",
-            "Tantau 1" : "Vacant"
-        },
-        "Mobiles" : {
-            "Paul 1" : "Vacant"
-        }
-    },
-    "day_roster" : {
-        "Booths": {
-            "Wofle 3" : "Vacant",
-            "Tantau 2" : "Vacant"
-        },
-        "Mobiles" : {
-            "Paul 2" : "Vacant",
-            "Paul 3" : "Vacant",
-            "Paul 4" : "Vacant"
-        },
-        "Edwards" : {
-            "Edward 1" : "Vacant",
-            "Edward 2" : "Vacant",
-            "Edward 3" : "Vacant",
-            "Edward 4" : "Vacant",
-            "Edward 5" : "Vacant"
-        }
+rosters = [  
+    { 
+        "shift" : [ { 
+            "name" :  "day",
+            "groups" :  [ {
+                "name" : "Gates", 
+                "mustFillPosts" : ["Charlie 1","Charlie 2","Charlie 3"],
+                "overflowPosts" : []
+            } , {
+                "name" : "Booths", 
+                "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
+                "overflowPosts" : []
+            } , { 
+                "name" : "Mobiles" , 
+                "mustFillPosts" : ["Paul 1", "Paul 2"],
+                "overflowPosts" : ["Paul 3", "Paul 4"]
+            } , {
+                "name" : "Edwards", 
+                "mustFillPosts" : [],
+                "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
+            } ] 
+        } , 
+        {
+            "name" :  "swing",
+            "groups" :  [ {
+                "name" : "Gates", 
+                "mustFillPosts" : ["Charlie 1","Charlie 2","Charlie 3"],
+                "overflowPosts" : []
+            } , {
+                "name" : "Booths", 
+                "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
+                "overflowPosts" : []
+            } , { 
+                "name" : "Mobiles" , 
+                "mustFillPosts" : ["Paul 1", "Paul 2"],
+                "overflowPosts" : ["Paul 3", "Paul 4"]
+            } , {
+                "name" : "Edwards", 
+                "mustFillPosts" : [],
+                "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
+            } ]
+        } , 
+        {
+            "name" :  "graveyard",
+            "groups" : [ {
+                "name" : "Gates", 
+                "mustFillPosts" : ["Charlie 1","Charlie 2","Charlie 3"],
+                "overflowPosts" : []
+            } , {
+                "name" : "Booths", 
+                "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
+                "overflowPosts" : []
+            } , { 
+                "name" : "Mobiles" , 
+                "mustFillPosts" : ["Paul 1", "Paul 2"],
+                "overflowPosts" : ["Paul 3", "Paul 4"]
+            } , {
+                "name" : "Edwards", 
+                "mustFillPosts" : [],
+                "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
+                } ] 
+        } ]
     }
-} 
- 
-def merge(d1, d2):
-    d2.update(d1) 
-    for r in rosters["day_roster"]:
-        for p in rosters["day_roster"][r]:
-            print("{} - {} - {}".format(rosters["day_roster"],r,p))
-                
+]
+   
 
 def create_rosters(staff, roster):
     shuffle(staff)
@@ -91,21 +113,9 @@ def write_roster(roster_file, roster):
 
 def main():
     staff = create_list("large-input.csv")
-    # build the post list
 
-    create_rosters(staff,"day_priority_roster")
-    if len(staff) > 0:
-        create_rosters(staff,"day_roster")
-
-    # merge rosters
-
-    merge(rosters["day_priority_roster"],rosters["day_roster"])
-    # shift_rosters = list(rosters.keys()) 
-
-
-    
-    # write_roster("day-p1-roster.csv", rosters["day_priority_roster"])
-    # write_roster("day-p2-roster.csv", rosters["day_roster"])
+    for shift in rosters:
+        print(shift[0])
     
     print("done")
 
