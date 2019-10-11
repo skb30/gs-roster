@@ -14,16 +14,6 @@ import csv
 # create the what's left hat and process it 
 
 
-# logic
-    # 1) create the must-fill hat from the types hat
-    #   add the type and the position
-    #
-    #
-    #
-    #
-    # "Paul 3", "Paul 4"
-    #["Edward 1","Edward 2","Edward 3","Edward 3","Edward 5"],
-
 rosters = {
     "day_priority_roster" : {
         "Gates" : {
@@ -58,13 +48,19 @@ rosters = {
             "Edward 5" : "Vacant"
         }
     }
-}  
-    
-    
+} 
+ 
+def merge(d1, d2):
+    d2.update(d1) 
+    for r in rosters["day_roster"]:
+        for p in rosters["day_roster"][r]:
+            print("{} - {} - {}".format(rosters["day_roster"],r,p))
+                
+
 def create_rosters(staff, roster):
     shuffle(staff)
+    
     # fill the rosters
-
     shift_roster = rosters[roster]
     for position_type in shift_roster:
         for position in shift_roster[position_type]:
@@ -72,8 +68,8 @@ def create_rosters(staff, roster):
                 shift_roster[position_type][position] = staff.pop()
             else:
                 print("No more staff")
-                return roster
-    return roster
+                return
+    return 
 
 def create_list(filename):
     filelist = []
@@ -87,24 +83,29 @@ def create_list(filename):
 def write_roster(roster_file, roster):
     with open(roster_file, 'w') as f:
         f.write("%s,%s\n" % ("POST","NAME"))
-
         for position in roster.keys():
             f.write("%s\n" %position)
             for unit in roster[position]:
-                if roster[position][unit] != 'Fill':
-                    f.write("%s,%s\n" % (unit, roster[position][unit]))
+                f.write("%s,%s\n" % (unit, roster[position][unit]))
+
 
 def main():
-    # constructor 
-    # dayShiftPriority = init_posts("Day")
-    staff = create_list("small-input.csv")
+    staff = create_list("large-input.csv")
     # build the post list
-    day_priority_roster = create_rosters(staff,"day_priority_roster")
-    if len(staff) > 0:
-        day_roster = create_rosters(staff,"day_roster")
 
-    write_roster("day-p1-roster.csv", day_priority_roster)
-    write_roster("day-p2-roster.csv", day_roster)
+    create_rosters(staff,"day_priority_roster")
+    if len(staff) > 0:
+        create_rosters(staff,"day_roster")
+
+    # merge rosters
+
+    merge(rosters["day_priority_roster"],rosters["day_roster"])
+    # shift_rosters = list(rosters.keys()) 
+
+
+    
+    # write_roster("day-p1-roster.csv", rosters["day_priority_roster"])
+    # write_roster("day-p2-roster.csv", rosters["day_roster"])
     
     print("done")
 
