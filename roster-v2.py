@@ -12,7 +12,7 @@ import csv
 
 # process the must-fill hat. If there's anything left over then
 # create the what's left hat and process it 
-new_roster = {}
+
 roster_policy  = [  
     {
         "shift" : [ { 
@@ -44,11 +44,11 @@ roster_policy  = [
             } , {
                 "name" : "Booths", 
                 "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
-                "overflowPosts" : []
+                "overflowPosts" : ["Tantau 2"]
             } , { 
                 "name" : "Mobiles" , 
                 "mustFillPosts" : ["Paul 1", "Paul 2"],
-                "overflowPosts" : ["Paul 3", "Paul 4"]
+                "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
             } , {
                 "name" : "Edwards", 
                 "mustFillPosts" : [],
@@ -77,16 +77,32 @@ roster_policy  = [
         } ]
     }
 ]
-def create_rosters(staff, roster):
+def create_rosters(staff, roster, shift_roster):
     shuffle(staff)
+    print(len(staff))
+
+    # make sure we have staff
+    
+    # build the rosters
     for shift in roster[0]["shift"]:
         # for group in shift["groups"]
-        print(shift["name"])
-        for groups in shift["groups"]:
-            print(groups["name"])
-            for mustFillPosts in groups["mustFillPosts"]:
-                print("shift: {} postion: {} unit: {}".format(shift["name"],groups["name"],mustFillPosts))
-            # process day shift
+        if shift_roster.lower() == shift["name"].lower():
+            print("{} Shift Roster ".format(shift["name"].upper()))
+            for groups in shift["groups"]:
+                # for posts in positions 
+                for mustFillPosts in groups["mustFillPosts"]:
+                    if len(staff) > 0: 
+                        print("{}, {}".format(mustFillPosts, staff.pop()))
+                    else:
+                        # no more stall so print the vacant posts
+                        for overflowPosts in groups["overflowPosts"]:
+                            print("{}, Vacant".format(overflowPosts))
+                        next
+        print("No More Staff")
+    print(len(staff)) 
+
+    # if len(staff) > 0:
+
 
 def get_staff(filename):
     filelist = []
@@ -107,11 +123,9 @@ def write_roster(roster_file, roster):
 
 
 def main():
-    staff = get_staff("large-input.csv")
+    staff = get_staff("really-small-input.csv")
+    create_rosters(staff, roster_policy, "day")
 
-    create_rosters(staff, roster_policy)
-
-    # print(roster_policy[0]["shift"][0]["groups"][0]["mustFillPosts"][1])
     
     print("*** done ***")
 
