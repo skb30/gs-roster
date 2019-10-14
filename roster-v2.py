@@ -12,9 +12,9 @@ import csv
 
 # process the must-fill hat. If there's anything left over then
 # create the what's left hat and process it 
-
-rosters = [  
-    { 
+new_roster = {}
+roster_policy  = [  
+    {
         "shift" : [ { 
             "name" :  "day",
             "groups" :  [ {
@@ -77,23 +77,18 @@ rosters = [
         } ]
     }
 ]
-   
-
 def create_rosters(staff, roster):
     shuffle(staff)
-    
-    # fill the rosters
-    shift_roster = rosters[roster]
-    for position_type in shift_roster:
-        for position in shift_roster[position_type]:
-            if len(staff) != 0:
-                shift_roster[position_type][position] = staff.pop()
-            else:
-                print("No more staff")
-                return
-    return 
+    for shift in roster[0]["shift"]:
+        # for group in shift["groups"]
+        print(shift["name"])
+        for groups in shift["groups"]:
+            print(groups["name"])
+            for mustFillPosts in groups["mustFillPosts"]:
+                print("shift: {} postion: {} unit: {}".format(shift["name"],groups["name"],mustFillPosts))
+            # process day shift
 
-def create_list(filename):
+def get_staff(filename):
     filelist = []
 
     with open(filename, newline='') as csvfile:
@@ -112,12 +107,13 @@ def write_roster(roster_file, roster):
 
 
 def main():
-    staff = create_list("large-input.csv")
+    staff = get_staff("large-input.csv")
 
-    for shift in rosters:
-        print(shift[0])
+    create_rosters(staff, roster_policy)
+
+    # print(roster_policy[0]["shift"][0]["groups"][0]["mustFillPosts"][1])
     
-    print("done")
+    print("*** done ***")
 
 if __name__ == "__main__":
   main()
