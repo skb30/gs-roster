@@ -2,7 +2,7 @@ from random import randrange, shuffle
 # from csv import writer
 import csv
 
-
+must_fill = []
 
 # create the types hat
 
@@ -78,27 +78,36 @@ roster_policy  = [
     }
 ]
 def create_rosters(staff, roster, shift_roster):
+
+    must_fill = []
+    must_fill.append([])
+
     shuffle(staff)
     print(len(staff))
 
     # make sure we have staff
-    
+    row = 0
+    j = 0
     # build the rosters
     for shift in roster[0]["shift"]:
         # for group in shift["groups"]
         if shift_roster.lower() == shift["name"].lower():
-            print("{} Shift Roster ".format(shift["name"].upper()))
+            # print("{} Shift Roster ".format(shift["name"].upper()))
             for groups in shift["groups"]:
+                position = groups["name"]
                 # for posts in positions 
-                for mustFillPosts in groups["mustFillPosts"]:
-                    if len(staff) > 0: 
-                        print("{}, {}".format(mustFillPosts, staff.pop()))
-                    else:
-                        # no more stall so print the vacant posts
-                        for overflowPosts in groups["overflowPosts"]:
-                            print("{}, Vacant".format(overflowPosts))
-                        next
+                for unit in groups["mustFillPosts"]:
+                    must_fill[row].append(position)
+                    must_fill[row].append(unit)
+                    must_fill[row].append(staff.pop())
+                    must_fill.append([])
+                    row += 1
+                    
+
+                        
         print("No More Staff")
+        for item in must_fill:
+            print("{} {}".format(item[0], item[1]))
     print(len(staff)) 
 
     # if len(staff) > 0:
