@@ -77,7 +77,11 @@ roster_policy  = [
         } ]
     }
 ]
-def create_rosters(staff, roster, shift):
+def create_rosters(staff, roster, priority):
+    if priority == 1:
+        fill = "mustFillPosts"
+    else:
+        fill = "overflowPosts"
 
     must_fill = []
     overflow = []
@@ -93,16 +97,11 @@ def create_rosters(staff, roster, shift):
         for post in posts:
             postName = post["name"]
             print("    {}".format(postName))
-            mustFillPosts = post["mustFillPosts"]
+            mustFillPosts = post[fill]
             for unit in mustFillPosts:
-                
                 print("        {}".format(unit))
-        # print("No More {} for {} ".format(shiftName,postName))
-
+        
     print(len(staff)) 
-
-    # if len(staff) > 0:
-
 
 def get_staff(filename):
     filelist = []
@@ -124,7 +123,7 @@ def write_roster(roster_file, roster):
 
 def main():
     staff = get_staff("large-input.csv")
-    create_rosters(staff, roster_policy, "day")
+    create_rosters(staff, roster_policy, 2)
 
     
     print("*** done ***")
