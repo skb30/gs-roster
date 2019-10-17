@@ -51,7 +51,7 @@ roster_policy  = [
                 "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
             } , {
                 "name" : "Edwards", 
-                "mustFillPosts" : [],
+                "mustFillPosts" : ["Scott 1"],
                 "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
             } ]
         } , 
@@ -77,37 +77,28 @@ roster_policy  = [
         } ]
     }
 ]
-def create_rosters(staff, roster, shift_roster):
+def create_rosters(staff, roster, shift):
 
     must_fill = []
+    overflow = []
     must_fill.append([])
 
     shuffle(staff)
-    print(len(staff))
+    sizeOfStaff = len(staff)
 
-    # make sure we have staff
-    row = 0
-    j = 0
-    # build the rosters
     for shift in roster[0]["shift"]:
-        # for group in shift["groups"]
-        if shift_roster.lower() == shift["name"].lower():
-            # print("{} Shift Roster ".format(shift["name"].upper()))
-            for groups in shift["groups"]:
-                position = groups["name"]
-                # for posts in positions 
-                for unit in groups["mustFillPosts"]:
-                    must_fill[row].append(position)
-                    must_fill[row].append(unit)
-                    must_fill[row].append(staff.pop())
-                    must_fill.append([])
-                    row += 1
-                    
+        shiftName = shift["name"]
+        posts = shift["groups"]
+        print(shiftName.upper())
+        for post in posts:
+            postName = post["name"]
+            print("    {}".format(postName))
+            mustFillPosts = post["mustFillPosts"]
+            for unit in mustFillPosts:
+                
+                print("        {}".format(unit))
+        # print("No More {} for {} ".format(shiftName,postName))
 
-                        
-        print("No More Staff")
-        for item in must_fill:
-            print("{} {}".format(item[0], item[1]))
     print(len(staff)) 
 
     # if len(staff) > 0:
@@ -132,7 +123,7 @@ def write_roster(roster_file, roster):
 
 
 def main():
-    staff = get_staff("really-small-input.csv")
+    staff = get_staff("large-input.csv")
     create_rosters(staff, roster_policy, "day")
 
     
