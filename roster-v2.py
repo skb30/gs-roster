@@ -77,31 +77,36 @@ roster_policy  = [
         } ]
     }
 ]
-def create_rosters(staff, roster, priority):
+def get_blank_rosters(shift_roster, roster, priority):
     if priority == 1:
         fill = "mustFillPosts"
     else:
         fill = "overflowPosts"
-
-    must_fill = []
-    overflow = []
-    must_fill.append([])
-
-    shuffle(staff)
-    sizeOfStaff = len(staff)
+    blank_roster = []
 
     for shift in roster[0]["shift"]:
-        shiftName = shift["name"]
-        posts = shift["groups"]
-        print(shiftName.upper())
-        for post in posts:
-            postName = post["name"]
-            print("    {}".format(postName))
-            mustFillPosts = post[fill]
-            for unit in mustFillPosts:
-                print("        {}".format(unit))
-        
-    print(len(staff)) 
+        print(shift["name"])
+        i = 0
+        if shift["name"] == 'day':
+            
+            posts = shift["groups"]
+            # print(shiftName.upper())
+            for post in posts:
+                mustFillPosts = post[fill]
+                size = len(mustFillPosts)
+                if size != 0:
+                    blank_roster.append([]) # create a row 
+                    size -= 1
+                
+                for unit in mustFillPosts:
+                    blank_roster[i].append(unit)
+                    blank_roster[i].append("Vacant")
+                    i += 1
+                    if size != 0:
+                        blank_roster.append([])
+                        size -= 1
+    return blank_roster         
+
 
 def get_staff(filename):
     filelist = []
@@ -123,7 +128,17 @@ def write_roster(roster_file, roster):
 
 def main():
     staff = get_staff("large-input.csv")
-    create_rosters(staff, roster_policy, 2)
+
+    print("*** Start ***")
+    p = get_blank_rosters("day", roster_policy, 1)
+    for item in p:
+        print(item)
+    # get the must fill positions for day shift
+
+
+
+    print("*** End ***")
+    # create_rosters(staff, roster_policy, 2)
 
     
     print("*** done ***")
