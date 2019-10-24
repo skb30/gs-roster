@@ -1,25 +1,21 @@
 from random import randrange, shuffle
 import csv
 
+# Generate the shift roasters by placing the staff randomly in positions. 
+# This will eliminate any bias as to where the staff is posted. 
+# skb
+
 must_fill = []
 
-# create the types hat
-
-# create the staff hat
-
-# create the must-fill hat
-
-# process the must-fill hat. If there's anything left over then
-# create the what's left hat and process it 
 
 roster_policy  = [  
     {
         "shift" : [ { 
-            "name" :  "5:00AM - 2:00PM",
+            "name" : "5:00AM - 2:00PM",
             "groups" :  [ {
                 "name" : "Gates", 
-                "mustFillPosts" : ["Charlie 1","Charlie 2"],
-                "overflowPosts" : ["Charlie 3"]
+                "mustFillPosts" : ["Charlie 1","Charlie 2","Charlie 3"],
+                "overflowPosts" : []
             } , {
                 "name" : "Booths", 
                 "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
@@ -27,7 +23,7 @@ roster_policy  = [
             } , { 
                 "name" : "Mobiles" , 
                 "mustFillPosts" : ["Paul 1", "Paul 2"],
-                "overflowPosts" : ["Paul 3", "Paul 4"]
+                "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
             } , {
                 "name" : "Edwards", 
                 "mustFillPosts" : [],
@@ -38,15 +34,15 @@ roster_policy  = [
             "name" :  "7:00AM - 4:00PM",
             "groups" :  [ {
                 "name" : "Georges", 
-                "mustFillPosts" : ["George 1","George 2","George 3","George 4","George 5","George 6","George 7"],
-                "overflowPosts" : []
+                "mustFillPosts" : ["George 2","George 3","George 6","George 7","George 8"],
+                "overflowPosts" : ["George 1", "George 4","George 5","George 9"]
             } , {
                 "name" : "Roberts", 
                 "mustFillPosts" : ["Robert 1","Robert 2"],
                 "overflowPosts" : ["Tantau 2"]
             } , { 
                 "name" : "Mobiles" , 
-                "mustFillPosts" : ["Paul 1", "Paul 2"],
+                "mustFillPosts" : [],
                 "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
             } , {
                 "name" : "Edwards", 
@@ -123,33 +119,49 @@ def get_blank_rosters(shift_roster, roster, priority):
                         size -= 1
     return blank_roster         
 
-def get_staff(filename, shift):
+def get_staff(filename, shift, site):
     staffList = []
     callOffList = []
+    callOff = "CALL OFF"
     with open(filename, newline='') as csvfile:
         shiftsRoaster = csv.reader(csvfile, delimiter=',', quotechar='|')
         for name in shiftsRoaster:
-            # print("0-{} 1-{} 2-{} 3-{} 4-{} 5-{} 6-{} 9-{}".format(name[0],name[1],name[2],name[3],name[4],name[5],name[6],name[9]))
-            if name[5] == shift and name[9] != 'CALL OFF':
-                staffList.append(name[6])
-            elif name[5] == shift and name[9] == 'CALL OFF':
-                # callOffList.append("Call Off")
-                callOffList.append(name[6])
+
+            # strip out the quotes
+
+            roleFromFile        = name[4].strip('\"')
+            shiftFromFile       = name[5].strip('\"')
+            firstNameFromFile   = name[7].strip('\"')
+            lastNameFromFile    = name[8].strip('\"')
+            subjectFromFile     = name[9].strip('\"')    
+
+            if roleFromFile == site and len(firstNameFromFile) > 0:
+                # print("4-{} 5-{} 7-{} 8-{} 9-{}".format(name[4],name[5],name[7],name[8],name[9]))
+                fullName = firstNameFromFile + " " + lastNameFromFile
+                if shiftFromFile == shift and subjectFromFile != callOff:
+                    staffList.append(fullName)
+                elif shiftFromFile == shift and subjectFromFile == callOff:
+                    callOffList.append(fullName)
+
+        shuffle(staffList)        
     return staffList, callOffList
 
 def write_roster(roster_file, roster, callOffList):
-    roster_file = "./output-files/" + roster_file + ".csv"
+    shiftName = roster_file
+    roster_file = "./output-files/" + roster_file + ".txt"
     with open(roster_file, 'w') as f:
-        f.write("%s,%s\n" % ("POST","NAME"))
+        f.write("%s\n" % ("Shift: " + shiftName ))
+        f.write("%s\t%s\n" % ("POST","NAME" ))
         for position in roster:
-            f.write("%s,%s\n" % (position[0],position[1]))
+            f.write("%s\t%s\n" % (position[0],position[1]))
         f.write("%s\n" % ("Call Off List"))
         for name in callOffList:
-            f.write("%s,%s\n" % (" ",name))
+            f.write("%s\t%s\n" % (" ",name))
+            # print("call name {}".format(name))
 
 
-def build_roster(shift, staff):
-    staff, callOffList = get_staff(staff, shift)
+def build_roster(shift, staff, site):
+    staff, callOffList = get_staff(staff, shift, site)
 
     # create staff list by shift
     
@@ -202,13 +214,16 @@ def main():
     leftoverStaff = []
     # staff = "really-small-input.csv"
     # staff = "small-input.csv"
-    staff = "./input-files/today1.csv"
+    # staff = "./input-files/ShiftboardShifts-5.csv"
+    staff = "./input-files/ShiftboardShifts-6.csv"
+    # staff = "./input-files/today1.csv"
+    site = "Apple Park"
 
     # shift = "shift5"
-
+    
     shifts = ['5:00AM - 2:00PM','7:00AM - 4:00PM','1:00PM - 10:00PM','9:00PM - 6:00AM']
     for shift in shifts:
-        (roster, leftoverStaff, callOffList) = build_roster(shift, staff) 
+        (roster, leftoverStaff, callOffList) = build_roster(shift, staff,site) 
         write_roster(shift, roster, callOffList)
         # for p in roster:
             # print("{},{}".format(p[0], p[1]))    
@@ -216,7 +231,7 @@ def main():
 
         # Check to see if there's any leftover staff
         if len(leftoverStaff) > 0:
-            print("Unassigned")
+            print("Over Staff")
             for name in leftoverStaff:
                 print("  {} ".format(name))     
     print("*** End ***")
