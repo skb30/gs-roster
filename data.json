@@ -1,0 +1,40 @@
+[
+  {
+    "site": {
+      "name": "Apple Park",
+      "shifts": [
+        {
+          "name": "5:00AM - 2:00PM",
+          "groups": [
+            {
+              "name": "Gates",
+              "mustFillPosts": ["Charlie 1", "Charlie 2", "Charlie 3"],
+              "overflowPosts": []
+            },
+            {
+              "name": "Booths",
+              "mustFillPosts": ["Wofle 1", "Wofle 2", "Tantau 1"],
+              "overflowPosts": []
+            },
+            {
+              "name": "Mobiles",
+              "mustFillPosts": ["Paul 1", "Paul 2"],
+              "overflowPosts": ["Paul 3", "Paul 4", "Paul 5"]
+            },
+            {
+              "name": "Edwards",
+              "mustFillPosts": [],
+              "overflowPosts": [
+                "Edward 1",
+                "Edward 2",
+                "Edward 3",
+                "Edward 4",
+                "Edward 5"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

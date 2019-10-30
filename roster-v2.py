@@ -1,44 +1,75 @@
 from random import randrange, shuffle
 import csv
 
-# Generate the shift roasters by placing the staff randomly in positions. 
-# This will eliminate any bias as to where the staff is posted. 
+# Generate the shift roasters by placing the staff randomly in positions.
+# This will eliminate any bias as to where the staff is posted.
 # skb
 
+# ds consdier standardizing on format for variable names
+# ds and function names. Industry standard seems to be camelCase
+
+
+# dgs this seems out of place here
+# dgs consider moving to inside of main and pass to fuctions
 must_fill = []
 
-roster_policy  = [
-    {
-        "site" : {
-            "name" : "Apple Park",
-            "shifts" : [{
-                "name" : "5:00AM - 2:00PM",
-                "groups" :  [ {
-                    "name" : "Gates",
-                    "mustFillPosts" : ["Charlie 1","Charlie 2","Charlie 3"],
-                    "overflowPosts" : []
-                } , {
-                    "name" : "Booths",
-                    "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
-                    "overflowPosts" : []
-                } , {
-                    "name" : "Mobiles" ,
-                    "mustFillPosts" : ["Paul 1", "Paul 2"],
-                    "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
-                } , {
-                    "name" : "Edwards",
-                    "mustFillPosts" : [],
-                    "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
-                } ]
-            }]
-        }
-    }
-]
-def get_blank_rosters(shift_roster, roster, priority):
-    if priority == 1:
-        fill = "mustFillPosts"
+
+# -------------------------
+# ds need pramble to tell what this funciton is doing
+# ds preable should be no more than 1 line
+# ds also preable should describe inputs and outputs
+def build_roster(shift, staff, site):
+    row = 0
+    fullRoster = []
+    sizeOfMustFill = len(mustFillRoster)
+    sizeOfOverFlow = len(overFlowRoster)
+    combined = sizeOfMustFill + sizeOfOverFlow
+
+    staff, callOffList = get_staff(staff, shift, site)
+    mustFillRoster = get_blank_rosters(shift, roster_policy, "mustFillPosts")
+    shuffle(mustFillRoster)
+    overFlowRoster = get_blank_rosters(shift, roster_policy, "overflowPosts")
+    shuffle(overFlowRoster)
+
+    # More positions to fill than staff so we'll fill the must-fill first
+    if len(staff) <= len(mustFillRoster):
+
+        while len(staff) > 0:
+            mustFillRoster[row][1] = staff.pop()
+            row += 1
+        fullRoster = mustFillRoster + overFlowRoster
+
+    elif len(staff) <= combined:  # leftover staff so let's fill overflow
+            while sizeOfMustFill > 0:
+                mustFillRoster[row][1] = staff.pop()
+                row += 1
+                sizeOfMustFill -= 1
+            row = 0
+
+            if len(staff) >= 0:
+                while sizeOfOverFlow > 0 and len(staff) > 0:
+                    overFlowRoster[row][1] = staff.pop()
+                    row += 1
+                    sizeOfOverFlow -= 1
+            fullRoster = mustFillRoster + overFlowRoster
     else:
-        fill = "overflowPosts"
+        # We have more staff than positions so let's fill them all
+        fullRoster = mustFillRoster + overFlowRoster
+        shuffle(fullRoster)
+        sizeOfFullRoster = len(fullRoster)
+        while sizeOfFullRoster > 0:
+            fullRoster[row][1] = staff.pop()
+            row += 1
+            sizeOfFullRoster -= 1
+    fullRoster.sort()
+    return fullRoster, staff, callOffList
+
+
+# -------------------------
+# ds need pramble to tell what this funciton is doing
+# ds preable should be no more than 1 line
+# ds also preable should describe inputs and outputs
+def get_blank_rosters(shift_roster, roster, fill):
     blank_roster = []
 
     for policy in roster[0]["policy"]:
@@ -49,18 +80,24 @@ def get_blank_rosters(shift_roster, roster, priority):
                 mustFillPosts = post[fill]
                 size = len(mustFillPosts)
                 if size != 0:
-                    blank_roster.append([]) # create a roster row 
+                    blank_roster.append([])  # create a roster row
                     size -= 1
-                
+
                 for unit in mustFillPosts:
-                    blank_roster[i].append(unit) # add unit column to the row
-                    blank_roster[i].append("Vacant") # add name column to the row
+                    blank_roster[i].append(unit)  # add unit column to the row
+                    # add name column to the row
+                    blank_roster[i].append("Vacant")
                     i += 1
                     if size != 0:
                         blank_roster.append([])
                         size -= 1
-    return blank_roster         
+    return blank_roster
 
+
+# -------------------------
+# ds need pramble to tell what this funciton is doing
+# ds preable should be no more than 1 line
+# ds also preable should describe inputs and outputs
 def get_staff(filename, shift, site):
     staffList = []
     callOffList = []
@@ -70,12 +107,12 @@ def get_staff(filename, shift, site):
         for row in shiftsRoaster:
 
             # strip out the quotes
-            
-            roleFromFile        = row[4].strip('\"')
-            shiftFromFile       = row[5].strip('\"')
-            firstNameFromFile   = row[7].strip('\"')
-            lastNameFromFile    = row[8].strip('\"')
-            subjectFromFile     = row[9].strip('\"')    
+
+            roleFromFile = row[4].strip('\"')
+            shiftFromFile = row[5].strip('\"')
+            firstNameFromFile = row[7].strip('\"')
+            lastNameFromFile = row[8].strip('\"')
+            subjectFromFile = row[9].strip('\"')
 
             if roleFromFile == site:
                  if len(firstNameFromFile) > 0:
@@ -92,6 +129,10 @@ def get_staff(filename, shift, site):
         shuffle(staffList)        
     return staffList, callOffList
 
+# -------------------------
+# ds need pramble to tell what this funciton is doing
+# ds preable should be no more than 1 line
+# ds also preable should describe inputs and outputs
 def write_roster(roster_file, roster, callOffList):
     shiftName = roster_file
     roster_file = "./output-files/" + roster_file + ".txt"
@@ -106,53 +147,11 @@ def write_roster(roster_file, roster, callOffList):
             # print("call name {}".format(name))
 
 
-def build_roster(shift, staff, site):
 
-    staff, callOffList = get_staff(staff, shift, site)
-    mustFillRoster = get_blank_rosters(shift, roster_policy, 1)
-    shuffle(mustFillRoster)
-    overFlowRoster = get_blank_rosters(shift, roster_policy, 2)
-    shuffle(overFlowRoster)
-    
-    row            = 0
-    fullRoster     = []
-    sizeOfMustFill = len(mustFillRoster)
-    sizeOfOverFlow = len(overFlowRoster)
-    combined       = sizeOfMustFill + sizeOfOverFlow
-   
-    if len(staff) <= len(mustFillRoster): # More positions to fill than staff so we'll fill the must-fill first
-        
-        while len(staff) > 0:
-            mustFillRoster[row][1] = staff.pop()
-            row += 1
-        fullRoster = mustFillRoster + overFlowRoster
-
-    elif len(staff) <= combined: # leftover staff so let's fill overflow
-            while sizeOfMustFill > 0:
-                mustFillRoster[row][1] = staff.pop()
-                row += 1
-                sizeOfMustFill -= 1
-            row = 0 
-    
-            if len(staff) >= 0:
-                while sizeOfOverFlow > 0 and len(staff) > 0:
-                    overFlowRoster[row][1] = staff.pop()
-                    row += 1
-                    sizeOfOverFlow -= 1    
-            fullRoster = mustFillRoster + overFlowRoster
-    else:
-        # We have more staff than positions so let's fill them all
-        fullRoster = mustFillRoster + overFlowRoster 
-        shuffle(fullRoster)
-        sizeOfFullRoster = len(fullRoster)
-        while sizeOfFullRoster > 0:
-            fullRoster[row][1] = staff.pop()
-            row += 1
-            sizeOfFullRoster -= 1   
-    fullRoster.sort() 
-    return fullRoster, staff, callOffList
-
-
+# -------------------------
+# ds need pramble to tell what this funciton is doing
+# ds preable should be no more than 1 line
+# ds also preable should describe inputs and outputs
 def main():
     print("*** Start ***")
     leftoverStaff = []
@@ -169,9 +168,9 @@ def main():
     
 
 
-    #TODO grab from json
-    #TODO add site to json
-    #TODO rework 141
+    # TODO grab from json
+    # TODO add site to json
+    # TODO rework 141
 
     # get the shifts from json
     theShifts = []
