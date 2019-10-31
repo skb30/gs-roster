@@ -1,5 +1,6 @@
 from random import randrange, shuffle
 import csv
+import json
 
 # Generate the shift roasters by placing the staff randomly in positions. 
 # This will eliminate any bias as to where the staff is posted. 
@@ -7,33 +8,6 @@ import csv
 
 must_fill = []
 
-roster_policy  = [
-    {
-        "site" : {
-            "name" : "Apple Park",
-            "shifts" : [{
-                "name" : "5:00AM - 2:00PM",
-                "groups" :  [ {
-                    "name" : "Gates",
-                    "mustFillPosts" : ["Charlie 1","Charlie 2","Charlie 3"],
-                    "overflowPosts" : []
-                } , {
-                    "name" : "Booths",
-                    "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
-                    "overflowPosts" : []
-                } , {
-                    "name" : "Mobiles" ,
-                    "mustFillPosts" : ["Paul 1", "Paul 2"],
-                    "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
-                } , {
-                    "name" : "Edwards",
-                    "mustFillPosts" : [],
-                    "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
-                } ]
-            }]
-        }
-    }
-]
 def get_blank_rosters(shift_roster, roster, priority):
     if priority == 1:
         fill = "mustFillPosts"
@@ -41,7 +15,7 @@ def get_blank_rosters(shift_roster, roster, priority):
         fill = "overflowPosts"
     blank_roster = []
 
-    for policy in roster[0]["policy"]:
+    for policy in roster['shifts']:
         i = 0
         if policy["name"] == shift_roster:
             posts = policy["groups"]
@@ -78,9 +52,9 @@ def get_staff(filename, shift, site):
             subjectFromFile     = row[9].strip('\"')    
 
             if roleFromFile == site:
-                 if len(firstNameFromFile) > 0:
-                # print("4-{} 5-{} 7-{} 8-{} 9-{}".format(name[4],name[5],name[7],name[8],name[9]))
-                fullName = firstNameFromFile + " " + lastNameFromFile
+                if len(firstNameFromFile) > 0:
+                    # print("4-{} 5-{} 7-{} 8-{} 9-{}".format(name[4],name[5],name[7],name[8],name[9]))
+                    fullName = firstNameFromFile + " " + lastNameFromFile
 
                 if shiftFromFile == shift:
                     if subjectFromFile == callOff:
@@ -89,7 +63,8 @@ def get_staff(filename, shift, site):
                         staffList.append(fullName)
                     
 
-        shuffle(staffList)        
+        shuffle(staffList)
+
     return staffList, callOffList
 
 def write_roster(roster_file, roster, callOffList):
@@ -105,50 +80,53 @@ def write_roster(roster_file, roster, callOffList):
             f.write("%s\t%s\n" % (" ",name))
             # print("call name {}".format(name))
 
-
-def build_roster(shift, staff, site):
-
-    staff, callOffList = get_staff(staff, shift, site)
-    mustFillRoster = get_blank_rosters(shift, roster_policy, 1)
-    shuffle(mustFillRoster)
-    overFlowRoster = get_blank_rosters(shift, roster_policy, 2)
-    shuffle(overFlowRoster)
     
-    row            = 0
-    fullRoster     = []
-    sizeOfMustFill = len(mustFillRoster)
-    sizeOfOverFlow = len(overFlowRoster)
-    combined       = sizeOfMustFill + sizeOfOverFlow
-   
-    if len(staff) <= len(mustFillRoster): # More positions to fill than staff so we'll fill the must-fill first
-        
-        while len(staff) > 0:
-            mustFillRoster[row][1] = staff.pop()
-            row += 1
-        fullRoster = mustFillRoster + overFlowRoster
+def build_roster(site, staff, sitePolicy):
+    staffFileName = staff
+    for items in sitePolicy['shifts']:
+        # get shift so we can build the staff list
+        shift = items["name"]
+        staff, callOffList = get_staff(staffFileName, shift, site)
 
-    elif len(staff) <= combined: # leftover staff so let's fill overflow
-            while sizeOfMustFill > 0:
+        mustFillRoster = get_blank_rosters(shift, sitePolicy, 1)
+        shuffle(mustFillRoster)
+        overFlowRoster = get_blank_rosters(shift, sitePolicy, 2)
+        shuffle(overFlowRoster)
+        
+        row            = 0
+        fullRoster     = []
+        sizeOfMustFill = len(mustFillRoster)
+        sizeOfOverFlow = len(overFlowRoster)
+        combined       = sizeOfMustFill + sizeOfOverFlow
+    
+        if len(staff) <= len(mustFillRoster): # More positions to fill than staff so we'll fill the must-fill first
+            while len(staff) > 0:
                 mustFillRoster[row][1] = staff.pop()
                 row += 1
-                sizeOfMustFill -= 1
-            row = 0 
-    
-            if len(staff) >= 0:
-                while sizeOfOverFlow > 0 and len(staff) > 0:
-                    overFlowRoster[row][1] = staff.pop()
-                    row += 1
-                    sizeOfOverFlow -= 1    
             fullRoster = mustFillRoster + overFlowRoster
-    else:
-        # We have more staff than positions so let's fill them all
-        fullRoster = mustFillRoster + overFlowRoster 
-        shuffle(fullRoster)
-        sizeOfFullRoster = len(fullRoster)
-        while sizeOfFullRoster > 0:
-            fullRoster[row][1] = staff.pop()
-            row += 1
-            sizeOfFullRoster -= 1   
+
+        elif len(staff) <= combined: # leftover staff so let's fill overflow
+                while sizeOfMustFill > 0:
+                    mustFillRoster[row][1] = staff.pop()
+                    row += 1
+                    sizeOfMustFill -= 1
+                row = 0 
+        
+                if len(staff) >= 0:
+                    while sizeOfOverFlow > 0 and len(staff) > 0:
+                        overFlowRoster[row][1] = staff.pop()
+                        row += 1
+                        sizeOfOverFlow -= 1    
+                fullRoster = mustFillRoster + overFlowRoster
+        else:
+            # We have more staff than positions so let's fill them all
+            fullRoster = mustFillRoster + overFlowRoster 
+            shuffle(fullRoster)
+            sizeOfFullRoster = len(fullRoster)
+            while sizeOfFullRoster > 0:
+                fullRoster[row][1] = staff.pop()
+                row += 1
+                sizeOfFullRoster -= 1   
     fullRoster.sort() 
     return fullRoster, staff, callOffList
 
@@ -156,40 +134,54 @@ def build_roster(shift, staff, site):
 def main():
     print("*** Start ***")
     leftoverStaff = []
-    # staff = "really-small-input.csv"
-    # staff = "small-input.csv"
-    # staff = "./input-files/ShiftboardShifts-5.csv"
-    staff = "./input-files/ShiftboardShifts-8.csv"
-    # staff = "./input-files/today1.csv" 
-    site = "Apple Park"
+    staff = "./input-files/ShiftboardShifts-8.csv" 
 
+  
+    # get the policies
+    with open('./input-files/policy.json') as json_file:
+        roster_policies = json.load(json_file)           
+
+#     #TODO grab from json
+#     #TODO add site to json
+#     #TODO rework 141
+
+    # get the shifts for Apple Park
+     
+    # items = roster_policy[0]["sites"]
+    # for shift in items['name']:
+    #     pass
+     
+
+    # shifts = ['5:00AM - 2:00PM','7:00AM - 4:00PM','1:00PM - 10:00PM','9:00PM - 6:00AM']
+    # for shift in shifts:
+    #     (roster, leftoverStaff, callOffList) = build_roster(shift, staff,site) 
+    #     write_roster(shift, roster, callOffList)
     
+    policies =  roster_policies[0]["sites"]
 
-    # create staff list by shift
-    
+    for sitePolicy in policies:
+        if sitePolicy['name'] == 'Apple Park':
+            (roster, leftoverStaff, callOffList) = build_roster(sitePolicy['name'], staff, sitePolicy) 
 
+            # get all the shifts
+            # items = sitePolicy['shifts']
+            # for shifts in items:
+            #     print("Processing Shift: {}".format(shifts['name']))
+                
 
-    #TODO grab from json
-    #TODO add site to json
-    #TODO rework 141
+    # theShifts = roster_policy[0]["sites"][1]["shifts"][1]["groups"][0]["name"]
+    # pass
 
-    # get the shifts from json
-    theShifts = []
-    roster = roster_policy
-    for shift in roster_policy[0]["policy"]:
-        theShifts.append(shift["name"])  
+#     # Process the shifts
+#     for shift in theShifts:
+#         (roster, leftoverStaff, callOffList) = build_roster(shift, staff, site) 
+#         write_roster(shift, roster, callOffList)    
 
-    # Process the shifts
-    for shift in theShifts:
-        (roster, leftoverStaff, callOffList) = build_roster(shift, staff, site) 
-        write_roster(shift, roster, callOffList)    
-
-        # Check to see if there's any leftover staff
-        if len(leftoverStaff) > 0:
-            print("Over Staff")
-            for name in leftoverStaff:
-                print("  {} ".format(name))     
-    print("*** End ***")
-
+#         # Check to see if there's any leftover staff
+#         if len(leftoverStaff) > 0:
+#             print("Over Staff")
+#             for name in leftoverStaff:
+#                 print("  {} ".format(name))     
+#     print("*** End ***")
 if __name__ == "__main__":
   main()
