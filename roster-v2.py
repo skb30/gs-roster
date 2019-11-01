@@ -2,10 +2,16 @@ from random import randrange, shuffle
 import csv
 import json
 
-# Generate the shift roasters by placing the staff randomly in positions. 
-# This will eliminate any bias as to where the staff is posted. 
+# Generate the shift roasters by placing the staff randomly in positions.
+# This will eliminate any bias as to where the staff is posted.
 # skb
 
+# ds consdier standardizing on format for variable names
+# ds and function names. Industry standard seems to be camelCase
+
+
+# dgs this seems out of place here
+# dgs consider moving to inside of main and pass to fuctions
 must_fill = []
 
 def get_blank_rosters(shift_roster, roster, priority):
@@ -23,9 +29,9 @@ def get_blank_rosters(shift_roster, roster, priority):
                 mustFillPosts = post[fill]
                 size = len(mustFillPosts)
                 if size != 0:
-                    blank_roster.append([]) # create a roster row 
+                    blank_roster.append([]) # create a roster row
                     size -= 1
-                
+
                 for unit in mustFillPosts:
                     blank_roster[i].append(unit) # add unit column to the row
                     blank_roster[i].append("Vacant") # add name column to the row
@@ -33,7 +39,7 @@ def get_blank_rosters(shift_roster, roster, priority):
                     if size != 0:
                         blank_roster.append([])
                         size -= 1
-    return blank_roster         
+    return blank_roster
 
 def get_staff(filename, shift, site):
     staffList = []
@@ -44,12 +50,12 @@ def get_staff(filename, shift, site):
         for row in shiftsRoaster:
 
             # strip out the quotes
-            
+
             roleFromFile        = row[4].strip('\"')
             shiftFromFile       = row[5].strip('\"')
             firstNameFromFile   = row[7].strip('\"')
             lastNameFromFile    = row[8].strip('\"')
-            subjectFromFile     = row[9].strip('\"')    
+            subjectFromFile     = row[9].strip('\"')
 
             if roleFromFile == site:
                 if len(firstNameFromFile) > 0:
@@ -61,12 +67,16 @@ def get_staff(filename, shift, site):
                         callOffList.append(fullName)
                     elif subjectFromFile != callOff:
                         staffList.append(fullName)
-                    
+
 
         shuffle(staffList)
 
     return staffList, callOffList
 
+# -------------------------
+# ds need pramble to tell what this funciton is doing
+# ds preable should be no more than 1 line
+# ds also preable should describe inputs and outputs
 def write_roster(roster_file, roster, callOffList):
     shiftName = roster_file
     roster_file = "./output-files/" + roster_file + ".txt"
@@ -131,6 +141,10 @@ def build_roster(site, staff, sitePolicy):
     return fullRoster, staff, callOffList
 
 
+# -------------------------
+# ds need pramble to tell what this funciton is doing
+# ds preable should be no more than 1 line
+# ds also preable should describe inputs and outputs
 def main():
     print("*** Start ***")
     leftoverStaff = []
