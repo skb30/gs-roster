@@ -144,18 +144,6 @@ def main():
 #     #TODO grab from json
 #     #TODO add site to json
 #     #TODO rework 141
-
-    # get the shifts for Apple Park
-     
-    # items = roster_policy[0]["sites"]
-    # for shift in items['name']:
-    #     pass
-     
-
-    # shifts = ['5:00AM - 2:00PM','7:00AM - 4:00PM','1:00PM - 10:00PM','9:00PM - 6:00AM']
-    # for shift in shifts:
-    #     (roster, leftoverStaff, callOffList) = build_roster(shift, staff,site) 
-    #     write_roster(shift, roster, callOffList)
     
     policies =  roster_policies[0]["sites"]
 
@@ -163,25 +151,15 @@ def main():
         if sitePolicy['name'] == 'Apple Park':
             (roster, leftoverStaff, callOffList) = build_roster(sitePolicy['name'], staff, sitePolicy) 
 
-            # get all the shifts
-            # items = sitePolicy['shifts']
-            # for shifts in items:
-            #     print("Processing Shift: {}".format(shifts['name']))
-                
-
-    # theShifts = roster_policy[0]["sites"][1]["shifts"][1]["groups"][0]["name"]
-    # pass
-
-#     # Process the shifts
-#     for shift in theShifts:
-#         (roster, leftoverStaff, callOffList) = build_roster(shift, staff, site) 
-#         write_roster(shift, roster, callOffList)    
+            # write_roster(shift, roster, callOffList)    
 
 #         # Check to see if there's any leftover staff
 #         if len(leftoverStaff) > 0:
 #             print("Over Staff")
 #             for name in leftoverStaff:
-#                 print("  {} ".format(name))     
-#     print("*** End ***")
+#                 print("  {} ".format(name))  
+                
+
+    print("*** End ***")
 if __name__ == "__main__":
   main()
