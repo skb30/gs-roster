@@ -1,0 +1,137 @@
+[
+    {
+        "sites" : [{
+            "name" : "Apple Park",
+            "shifts" : [{
+                "name" : "5:00AM - 2:00PM",
+                "groups" :  [ {
+                    "name" : "Gates",
+                    "mustFillPosts" : ["Charlie 1","Charlie 2","Charlie 3"],
+                    "overflowPosts" : []
+                } , {
+                    "name" : "Booths",
+                    "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
+                    "overflowPosts" : []
+                } , {
+                    "name" : "Mobiles" ,
+                    "mustFillPosts" : ["Paul 1", "Paul 2"],
+                    "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
+                } , {
+                    "name" : "Edwards",
+                    "mustFillPosts" : [],
+                    "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
+                } ]
+            } , {
+                "name" : "7:00AM - 4:00PM",
+                "groups" :  [ {
+                    "name" : "Georges",
+                    "mustFillPosts" : ["George 2","George 3","George 6","George 7","George 8"],
+                    "overflowPosts" : ["George 1", "George 4","George 5","George 9"]
+                } , {
+                        "name" : "Gates",
+                        "mustFillPosts" : ["Tantau 2"],
+                        "overflowPosts" : []
+                } , {
+                    "name" : "Roberts",
+                    "mustFillPosts" : ["Robert 1","Robert 2"],
+                    "overflowPosts" : []
+                } , {
+                    "name" : "Mobiles" ,
+                    "mustFillPosts" : [],
+                    "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
+                } , {
+                    "name" : "Edwards",
+                    "mustFillPosts" : ["Edward 1"],
+                    "overflowPosts" : ["Edward 2","Edward 3","Edward 4","Edward 5","Edward 6"]
+                } ]
+            } , {
+                "name" : "1:00PM - 10:00PM",
+                "groups" :  [ {
+                    "name" : "Gates", 
+                    "mustFillPosts" : ["Charlie 1","Charlie 2","Charlie 3"],
+                    "overflowPosts" : []
+            } , {
+                    "name" : "Booths", 
+                    "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
+                    "overflowPosts" : []
+            } , { 
+                    "name" : "Mobiles" , 
+                    "mustFillPosts" : ["Paul 1", "Paul 2"],
+                    "overflowPosts" : ["Paul 3", "Paul 4"]
+            } , {
+                    "name" : "Edwards", 
+                    "mustFillPosts" : [],
+                    "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
+                } ]
+            } , {
+                "name" : "9:00PM - 6:00AM",
+                "groups" :  [ {
+                    "name" : "Booths", 
+                    "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
+                    "overflowPosts" : []
+            } , { 
+                    "name" : "Mobiles" , 
+                    "mustFillPosts" : ["Paul 1", "Paul 2"],
+                    "overflowPosts" : ["Paul 3", "Paul 4"]
+            } , {
+                    "name" : "Edwards", 
+                    "mustFillPosts" : [],
+                    "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
+                } ]
+            }]
+        }, {
+           "name" : "Cupertino",
+            "shifts" : [{
+                "name" : "5:00AM - 2:00PM",
+                "groups" :  [ {
+
+                    "name" : "Mobiles" ,
+                    "mustFillPosts" : ["Alpha 1", "Alpha 2"],
+                    "overflowPosts" : ["Alpha 3", "Alpha 4","Alpha 5"]
+                } ]
+
+            } , {
+                "name" : "1:00PM - 10:00PM",
+                "groups" :  [ {
+                    "name" : "Mobiles" ,
+                    "mustFillPosts" : ["Alpha 1", "Alpha 2"],
+                    "overflowPosts" : ["Alpha 3", "Alpha 4","Alpha 5"]
+                } ]
+            }, {
+                "name" :"9:00PM - 6:00AM",
+                "groups" :  [ {
+                    "name" : "Mobiles" ,
+                    "mustFillPosts" : ["Alpha 1", "Alpha 2"],
+                    "overflowPosts" : ["Alpha 3", "Alpha 4","Alpha 5"]
+                } ]
+            } ]
+        }, {
+            "name" : "Sunnyvale",
+            "shifts" : [{
+                "name" : "5:00AM - 2:00PM",
+                "groups" :  [ {
+
+                    "name" : "Mobiles" ,
+                    "mustFillPosts" : ["Bravo 1", "Bravo 2"],
+                    "overflowPosts" : ["Bravo 3", "Bravo 4","Alpha 5"]
+                } ]
+
+            } , {
+                "name" : "1:00PM - 10:00PM",
+                "groups" :  [ {
+                    "name" : "Mobiles" ,
+                    "mustFillPosts" : ["Bravo 1", "Bravo 2"],
+                    "overflowPosts" : ["Bravo 3", "Bravo 4","Alpha 5"]
+                } ]
+            }, {
+                "name" :"9:00PM - 6:00AM",
+                "groups" :  [ {
+                    "name" : "Mobiles" ,
+                    "mustFillPosts" : ["Bravo 1", "Bravo 2"],
+                    "overflowPosts" : ["Bravo 3", "Bravo 4","Bravo 5"]
+                } ]
+            } ]
+
+        }]
+    }
+]
