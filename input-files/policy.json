@@ -45,6 +45,29 @@
                     "overflowPosts" : ["Edward 2","Edward 3","Edward 4","Edward 5","Edward 6"]
                 } ]
             } , {
+                "name" : "10:00AM - 7:00PM",
+                "groups" :  [ {
+                    "name" : "Georges",
+                    "mustFillPosts" : ["George 2","George 3","George 6","George 7","George 8"],
+                    "overflowPosts" : ["George 1", "George 4","George 5","George 9"]
+                } , {
+                        "name" : "Gates",
+                        "mustFillPosts" : ["Tantau 2"],
+                        "overflowPosts" : []
+                } , {
+                    "name" : "Roberts",
+                    "mustFillPosts" : ["Robert 1","Robert 2"],
+                    "overflowPosts" : []
+                } , {
+                    "name" : "Mobiles" ,
+                    "mustFillPosts" : [],
+                    "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
+                } , {
+                    "name" : "Edwards",
+                    "mustFillPosts" : ["Edward 1"],
+                    "overflowPosts" : ["Edward 2","Edward 3","Edward 4","Edward 5","Edward 6"]
+                } ]
+            } , {
                 "name" : "1:00PM - 10:00PM",
                 "groups" :  [ {
                     "name" : "Gates", 
@@ -113,7 +136,7 @@
 
                     "name" : "Mobiles" ,
                     "mustFillPosts" : ["Bravo 1", "Bravo 2"],
-                    "overflowPosts" : ["Bravo 3", "Bravo 4","Bravo 5"]
+                    "overflowPosts" : ["Bravo 3", "Bravo 4","Alpha 5"]
                 } ]
 
             } , {
@@ -121,7 +144,7 @@
                 "groups" :  [ {
                     "name" : "Mobiles" ,
                     "mustFillPosts" : ["Bravo 1", "Bravo 2"],
-                    "overflowPosts" : ["Bravo 3", "Bravo 4","Bravo 5"]
+                    "overflowPosts" : ["Bravo 3", "Bravo 4","Alpha 5"]
                 } ]
             }, {
                 "name" :"9:00PM - 6:00AM",
@@ -129,33 +152,6 @@
                     "name" : "Mobiles" ,
                     "mustFillPosts" : ["Bravo 1", "Bravo 2"],
                     "overflowPosts" : ["Bravo 3", "Bravo 4","Bravo 5"]
-                } ]
-            } ]
-
-        } , {
-            "name" : "Wolfe Campus",
-            "shifts" : [{
-                "name" : "7:00AM - 04:00PM",
-                "groups" :  [ {
-    
-                    "name" : "POSTS" ,
-                    "mustFillPosts" : ["Wolfe 1", "Wolfe 2", "Wolfe 3"],
-                    "overflowPosts" : ["Wolfe 4","Wolfe 5"]
-                } ]
-    
-            } , {
-                "name" : "10:00AM - 07:00PM",
-                "groups" :  [ {
-                    "name" : "Posts" ,
-                    "mustFillPosts" : ["Wolfe 1", "Wolfe 2", "Wolfe 3"],
-                    "overflowPosts" : ["Wolfe 4","Wolfe 5"]
-                } ]
-            }, {
-                "name" :"9:00PM - 6:00AM",
-                "groups" :  [ {
-                    "name" : "Posts" ,
-                    "mustFillPosts" : ["Wolfe 1", "Wolfe 2", "Wolfe 3"],
-                    "overflowPosts" : ["Wolfe 4","Wolfe 5"]
                 } ]
             } ]
 
