@@ -113,7 +113,7 @@
 
                     "name" : "Mobiles" ,
                     "mustFillPosts" : ["Bravo 1", "Bravo 2"],
-                    "overflowPosts" : ["Bravo 3", "Bravo 4","Alpha 5"]
+                    "overflowPosts" : ["Bravo 3", "Bravo 4","Bravo 5"]
                 } ]
 
             } , {
@@ -121,7 +121,7 @@
                 "groups" :  [ {
                     "name" : "Mobiles" ,
                     "mustFillPosts" : ["Bravo 1", "Bravo 2"],
-                    "overflowPosts" : ["Bravo 3", "Bravo 4","Alpha 5"]
+                    "overflowPosts" : ["Bravo 3", "Bravo 4","Bravo 5"]
                 } ]
             }, {
                 "name" :"9:00PM - 6:00AM",
@@ -129,6 +129,33 @@
                     "name" : "Mobiles" ,
                     "mustFillPosts" : ["Bravo 1", "Bravo 2"],
                     "overflowPosts" : ["Bravo 3", "Bravo 4","Bravo 5"]
+                } ]
+            } ]
+
+        } , {
+            "name" : "Wolfe Campus",
+            "shifts" : [{
+                "name" : "7:00AM - 04:00PM",
+                "groups" :  [ {
+    
+                    "name" : "POSTS" ,
+                    "mustFillPosts" : ["Wolfe 1", "Wolfe 2", "Wolfe 3"],
+                    "overflowPosts" : ["Wolfe 4","Wolfe 5"]
+                } ]
+    
+            } , {
+                "name" : "10:00AM - 07:00PM",
+                "groups" :  [ {
+                    "name" : "Posts" ,
+                    "mustFillPosts" : ["Wolfe 1", "Wolfe 2", "Wolfe 3"],
+                    "overflowPosts" : ["Wolfe 4","Wolfe 5"]
+                } ]
+            }, {
+                "name" :"9:00PM - 6:00AM",
+                "groups" :  [ {
+                    "name" : "Posts" ,
+                    "mustFillPosts" : ["Wolfe 1", "Wolfe 2", "Wolfe 3"],
+                    "overflowPosts" : ["Wolfe 4","Wolfe 5"]
                 } ]
             } ]
 

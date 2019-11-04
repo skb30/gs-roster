@@ -3,17 +3,18 @@ import csv
 import json
 from datetime import date
 
-
 # assign staff to the site/shift/roster. 
 # calls get_staff to get the staff list from the switchboard file.
 # calls build_vacant_roster which creates a vacant roster based on off the site
 # and shift policies. 
 # 
-def build_roster(site, staff, sitePolicy):
+def build_roster(site, staff, sitePolicy, rosterType='txt'):
     staffFileName = staff
     for items in sitePolicy['shifts']:
+
         # get shift so we can build the staff list
         shift = items["name"]
+
         staff, callOffList = get_staff(staffFileName, shift, site)
         numberOfStaff = len(staff)
 
@@ -45,8 +46,7 @@ def build_roster(site, staff, sitePolicy):
                     row += 1
                     sizeOfOverFlow -= 1    
             fullRoster = mustFillRoster + overFlowRoster
-        else:
-            # We have more staff than positions so let's fill them all
+        else: # We have more staff than positions so let's fill them all and report unassigned
             fullRoster = mustFillRoster + overFlowRoster 
             shuffle(fullRoster)
             sizeOfFullRoster = len(fullRoster)
@@ -57,7 +57,7 @@ def build_roster(site, staff, sitePolicy):
 
         fullRoster.sort() 
         fileName = site + " " + shift  
-        write_roster(fileName, fullRoster, callOffList, numberOfStaff, staff, 'csv')
+        write_roster(fileName, fullRoster, callOffList, numberOfStaff, staff, rosterType)
     
     
     return fullRoster, staff, callOffList
@@ -93,7 +93,7 @@ def build_vacant_roster(shift_roster, roster, priority):
                         size -= 1
     return blank_roster
 
-
+# called by build_roster
 # create a list of staff and a list of call offs from Shift Board input file.
 # These lists will be used as input to build_roaster 
 
@@ -103,8 +103,8 @@ def get_staff(filename, shift, site):
     callOff = "CALL OFF"
     with open(filename, newline='') as csvfile:
         shiftsRoaster = csv.reader(csvfile, delimiter=',', quotechar='|')
+        # process the rows from the input file
         for row in shiftsRoaster:
-
             # strip out the quotes
             roleFromFile        = row[4].strip('\"')
             shiftFromFile       = row[5].strip('\"')
@@ -113,15 +113,15 @@ def get_staff(filename, shift, site):
             subjectFromFile     = row[9].strip('\"')
 
             if roleFromFile == site:
+                # see if we have a name otherwise skip to next record
                 if len(firstNameFromFile) > 0:
-                    # print("4-{} 5-{} 7-{} 8-{} 9-{}".format(name[4],name[5],name[7],name[8],name[9]))
                     fullName = firstNameFromFile + " " + lastNameFromFile
-
-                if shiftFromFile == shift:
-                    if subjectFromFile == callOff:
-                        callOffList.append(fullName)
-                    elif subjectFromFile != callOff:
-                        staffList.append(fullName)
+                    # if the shift from the file matches the shift we're processing    
+                    if shiftFromFile == shift:
+                        if subjectFromFile == callOff:
+                            callOffList.append(fullName)
+                        elif subjectFromFile != callOff:
+                            staffList.append(fullName)
         shuffle(staffList)
         if len(callOffList) == 0:
             callOffList.insert(0,"No Call Offs")
@@ -130,7 +130,7 @@ def get_staff(filename, shift, site):
 
     return staffList, callOffList
 
-
+# called by build_roster
 # write the filled in roster to either a csv or tab file. 
 def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterType='csv'):
     shiftName = roster_file
@@ -146,7 +146,7 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
 
     roster_file = "./output-files/" + roster_file + fileExtension
     with open(roster_file, 'w') as f:
-        f.write("{} - {}\n".format("Computer generated roster for: " + shiftName, d ))
+        f.write("{} - {}\n".format("Automated roster for " + shiftName, d))
         f.write("{}\n".format("Number Of Available Staff: " + str(numberOfStaff)))
         
         i=0
@@ -161,12 +161,10 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
             f.write(fileType.format(position[0],position[1]))
 
         if len(staff) > 0:
-            f.write(fileType.format("Unassinged Staff: "))
+            f.write("Unassinged Staff:\n".format())
             for name in staff:
                f.write("{}\n".format(name)) 
 
-
- 
 # Generate the shift roasters by placing the staff randomly in positions.
 # This will eliminate any bias as to where the staff is posted.
 # skb
@@ -175,7 +173,7 @@ def main():
     print("*** Start ***")
 
     # staff list 
-    staff = "./input-files/ShiftboardShifts-74.csv" 
+    staff = "./input-files/ShiftboardShifts-75.csv" 
 
     # get the policies
     with open('./input-files/policy.json') as json_file:
@@ -184,7 +182,7 @@ def main():
     policies =  roster_policies[0]["sites"]
 
     for sitePolicy in policies:
-        build_roster(sitePolicy['name'], staff, sitePolicy) 
+        build_roster(sitePolicy['name'], staff, sitePolicy,rosterType='txt') 
         
     print("*** End ***")
 if __name__ == "__main__":
