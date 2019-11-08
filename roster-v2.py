@@ -8,6 +8,7 @@ from datetime import date
 # calls build_vacant_roster which creates a vacant roster based on off the site
 # and shift policies. 
 # 
+
 def build_roster(site, staff, sitePolicy, rosterType='txt'):
     staffFileName = staff
     for items in sitePolicy['shifts']:
@@ -58,8 +59,7 @@ def build_roster(site, staff, sitePolicy, rosterType='txt'):
         fullRoster.sort() 
         fileName = site + " " + shift  
         write_roster(fileName, fullRoster, callOffList, numberOfStaff, staff, rosterType)
-    
-    
+      
     return fullRoster, staff, callOffList
 
 
@@ -106,6 +106,7 @@ def get_staff(filename, shift, site):
         # process the rows from the input file
         for row in shiftsRoaster:
             # strip out the quotes
+            
             roleFromFile        = row[4].strip('\"')
             shiftFromFile       = row[5].strip('\"')
             firstNameFromFile   = row[7].strip('\"')
@@ -122,6 +123,7 @@ def get_staff(filename, shift, site):
                             callOffList.append(fullName)
                         elif subjectFromFile != callOff:
                             staffList.append(fullName)
+        # get the date from the roster 
         shuffle(staffList)
         if len(callOffList) == 0:
             callOffList.insert(0,"No Call Offs")
@@ -146,7 +148,7 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
 
     roster_file = "./output-files/" + roster_file + fileExtension
     with open(roster_file, 'w') as f:
-        f.write("{} - {}\n".format("Automated roster for " + shiftName, d))
+        f.write("{} , {}\n".format("Roster for " + shiftName, d))
         f.write("{}\n".format("Number Of Available Staff: " + str(numberOfStaff)))
         
         i=0
@@ -173,7 +175,7 @@ def main():
     print("*** Start ***")
 
     # staff list 
-    staff = "./input-files/ShiftboardShifts-75.csv" 
+    staff = "./input-files/ShiftboardShifts.csv" 
 
     # get the policies
     with open('./input-files/policy.json') as json_file:
