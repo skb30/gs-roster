@@ -11,8 +11,6 @@ import re
 # and shift policies. 
 # 
 messageLog = []
-pathToHome = '../../../'
-# pathToHome = '../../'
 
 def build_roster(site, staff, sitePolicy, rosterType='txt'):
     staffFileName = staff
@@ -24,7 +22,7 @@ def build_roster(site, staff, sitePolicy, rosterType='txt'):
         shift = items["name"]
         staff, callOffList = get_staff(staffFileName, shift, site)
         numberOfStaff = len(staff)
-        write_to_log("\tAvailable staff for shift {} is: {}".format(shift, numberOfStaff))
+        write_to_log("\tAvailabe staff for shift {} is: {}".format(shift, numberOfStaff))
         mustFillRoster = build_vacant_roster(shift, sitePolicy, 1)
         overFlowRoster = build_vacant_roster(shift, sitePolicy, 2)
 
@@ -111,7 +109,7 @@ def get_staff(filename, shift, site):
 
     # staff list 
     savedPwd = os.getcwd()
-    os.chdir(pathToHome + 'Downloads')
+    os.chdir('../../Downloads')
     pwd = os.getcwd()
 
     # print("Changing to directory: {} ".format(pwd))
@@ -167,7 +165,7 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
         fileType = "{}\t{}\n"
         fileExtension = '.txt'
 
-    roster_file = pathToHome + "Desktop/Rosters/" + roster_file + fileExtension
+    roster_file = "../../Desktop/Rosters/" + roster_file + fileExtension
     with open(roster_file, 'w') as f:
         f.write("{} , {}\n".format("Roster for " + shiftName, d))
         f.write("{}\n".format("Number Of Available Staff: " + str(numberOfStaff)))
@@ -193,7 +191,7 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
 def get_input_date(filename):
     dateFromFile = "Date not found in " + filename
     savedPwd = os.getcwd()
-    os.chdir(pathToHome + 'Downloads')
+    os.chdir('../../Downloads')
 
     # look for the shiftboard date using regex
     p = re.compile(r'^\d\d\d\d-\d\d-\d\d')
@@ -210,12 +208,15 @@ def get_input_date(filename):
     os.chdir(savedPwd)
     return dateFromFile
 
-# log console messages to file 
-def write_to_log(message):
-    print(message)
-    messageLog.append(message)
-    return messageLog
 
+def write_to_log(message):
+    # global messagLog
+    # print("")
+    print(message)
+    # print("")
+    messageLog.append(message)
+
+    return messageLog
 # Generate the shift roasters by placing the staff randomly in positions.
 # This will eliminate any bias as to where the staff is posted.
 # skb
@@ -224,7 +225,7 @@ def main():
     write_to_log("*** Auto generate rosters started ***")
 
     # create the output folder on the users desktop
-    path = pathToHome + "Desktop/Rosters"
+    path = "../../Desktop/Rosters"
     try:
         os.mkdir(path)
     except OSError:
@@ -255,9 +256,7 @@ def main():
         build_roster(sitePolicy['name'], staffInput, sitePolicy,rosterType='txt') 
         
     write_to_log("*** Auto generator completed ***")
-
-    # add the console log to rosters folder
-    with open(pathToHome + "Desktop/Rosters/roster-log.txt", 'w') as f:
+    with open("../../Desktop/Rosters/roster-log.txt", 'w') as f:
         f.write("Console Log\n")
         for row in messageLog:
             f.write(row + "\n")
