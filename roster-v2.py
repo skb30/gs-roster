@@ -23,7 +23,7 @@ def build_roster(site, staff, sitePolicy, rosterType='txt'):
         shift = items["name"]
         staff, callOffList = get_staff(staffFileName, shift, site)
         numberOfStaff = len(staff)
-        print("Availabe staff for shift {} is: {}".format(shift, numberOfStaff))
+        print("\tAvailabe staff for shift {} is: {}".format(shift, numberOfStaff))
         mustFillRoster = build_vacant_roster(shift, sitePolicy, 1)
         overFlowRoster = build_vacant_roster(shift, sitePolicy, 2)
 
@@ -66,6 +66,7 @@ def build_roster(site, staff, sitePolicy, rosterType='txt'):
         write_roster(fileName, fullRoster, callOffList, numberOfStaff, staff, rosterType)
     print("")
     print("Completed roster for: {}.".format(site))  
+    print("")
     return fullRoster, staff, callOffList
 
 
@@ -123,8 +124,6 @@ def get_staff(filename, shift, site):
         
         for row in shiftsRoaster:
             # strip out the quotes
-            
-            
             roleFromFile        = row[4].strip('\"')
             shiftFromFile       = row[5].strip('\"')
             firstNameFromFile   = row[7].strip('\"')
@@ -141,7 +140,7 @@ def get_staff(filename, shift, site):
                             callOffList.append(fullName)
                         elif subjectFromFile != callOff:
                             staffList.append(fullName)
-        # print("Built staff list from: {}/{} with date of: {}".format(pwd,filename, dateFromFile))                        
+        
         # get the date from the roster 
         shuffle(staffList)
         if len(callOffList) == 0:
@@ -149,7 +148,6 @@ def get_staff(filename, shift, site):
         else:
             callOffList.insert(0,"Call Offs:")
     os.chdir(savedPwd)
-    # print("Changed to directory: {} ".format(savedPwd))
 
     return staffList, callOffList
 
@@ -160,15 +158,6 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
     today = date.today()
     d = today.strftime("%m/%d/%y")
 
-    # create the output folder on the users desktop
-    path = "/tmp/Automated-Rosters-" + d
-
-    try:
-        os.mkdir(path)
-    except OSError:
-        print ("Creation of the directory %s failed" % path)
-    else:
-        print ("Successfully created the directory %s " % path)
 
     # create either a csv or tabbed file
     if rosterType == 'csv':
@@ -178,7 +167,7 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
         fileType = "{}\t{}\n"
         fileExtension = '.txt'
 
-    roster_file = "./output-files/" + roster_file + fileExtension
+    roster_file = "../../../Desktop/Rosters/" + roster_file + fileExtension
     with open(roster_file, 'w') as f:
         f.write("{} , {}\n".format("Roster for " + shiftName, d))
         f.write("{}\n".format("Number Of Available Staff: " + str(numberOfStaff)))
@@ -199,13 +188,14 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
             for name in staff:
                f.write("{}\n".format(name)) 
 
-# Generate the shift roasters by placing the staff randomly in positions.
-# This will eliminate any bias as to where the staff is posted.
-# skb
+# get the date out of the shiftboard file to display to 
+# the user
 def get_input_date(filename):
     dateFromFile = "Date not found in " + filename
     savedPwd = os.getcwd()
     os.chdir('../../../Downloads')
+
+    # look for the shiftboard date using regex
     p = re.compile(r'^\d\d\d\d-\d\d-\d\d')
     # p.match('2019-11-11')
     # print( p.match('2019-11-11,'))
@@ -220,25 +210,46 @@ def get_input_date(filename):
     os.chdir(savedPwd)
     return dateFromFile
 
-
+# Generate the shift roasters by placing the staff randomly in positions.
+# This will eliminate any bias as to where the staff is posted.
+# skb
 def main():
-    print("*** Starting Roster Builder ***")
+    print("")
+    print("*** Auto generate rosters started ***")
 
+    # create the output folder on the users desktop
+    path = "../../../Desktop/Rosters"
+    try:
+        os.mkdir(path)
+    except OSError:
+        pass
+        # print ("Rosters directirt already exists on users desktop")
+    else:
+        print ("Successfully created the directory %s " % path)
     staffInput = 'ShiftboardShifts.csv'
 
     # get shiftboard date
     shiftboardDate = get_input_date(staffInput)
     print("")
+    userInput = input("Process shiftboard " + shiftboardDate + " [y/n]? >")
+    if userInput.lower() != 'y':
+        print("*** Auto generate rosters ended ***")
+        return
+
+    print("")
     print("Process file: {} with date of {}".format(staffInput,shiftboardDate))
-    # get the policies
+    
+    # get the policies from json
     with open('./input-files/policy.json') as json_file:
         roster_policies = json.load(json_file)           
     
     policies =  roster_policies[0]["sites"]
 
+    # now process them
     for sitePolicy in policies:
         build_roster(sitePolicy['name'], staffInput, sitePolicy,rosterType='txt') 
         
-    print("*** Roster Builder End ***")
+    print("*** Auto generator roasters completed ***")
+    print("")
 if __name__ == "__main__":
   main()

@@ -18,8 +18,8 @@
                     "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
                 } , {
                     "name" : "Edwards",
-                    "mustFillPosts" : [],
-                    "overflowPosts" : ["Edward 1","Edward 2","Edward 3","Edward 4","Edward 5"]
+                    "mustFillPosts" : ["Edward 1","Edward 2"],
+                    "overflowPosts" : ["Edward 3","Edward 4","Edward 5"]
                 } ]
             } , {
                 "name" : "7:00AM - 4:00PM",
@@ -169,13 +169,6 @@
     
             } , {
                 "name" : "10:00AM - 7:00PM",
-                "groups" :  [ {
-                    "name" : "Posts" ,
-                    "mustFillPosts" : ["Wolfe 1", "Wolfe 2", "Wolfe 3"],
-                    "overflowPosts" : ["Wolfe 4","Wolfe 5"]
-                } ]
-            }, {
-                "name" :"9:00PM - 6:00AM",
                 "groups" :  [ {
                     "name" : "Posts" ,
                     "mustFillPosts" : ["Wolfe 1", "Wolfe 2", "Wolfe 3"],
