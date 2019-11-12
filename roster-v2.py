@@ -2,6 +2,9 @@ from random import randrange, shuffle
 import csv
 import json
 from datetime import date
+import os
+import re
+
 
 # assign staff to the site/shift/roster. 
 # calls get_staff to get the staff list from the switchboard file.
@@ -11,14 +14,16 @@ from datetime import date
 
 def build_roster(site, staff, sitePolicy, rosterType='txt'):
     staffFileName = staff
+    print()
+    print("Building Roster for: {}".format(site))
+    print()
     for items in sitePolicy['shifts']:
 
         # get shift so we can build the staff list
         shift = items["name"]
-
         staff, callOffList = get_staff(staffFileName, shift, site)
         numberOfStaff = len(staff)
-
+        print("Availabe staff for shift {} is: {}".format(shift, numberOfStaff))
         mustFillRoster = build_vacant_roster(shift, sitePolicy, 1)
         overFlowRoster = build_vacant_roster(shift, sitePolicy, 2)
 
@@ -59,7 +64,8 @@ def build_roster(site, staff, sitePolicy, rosterType='txt'):
         fullRoster.sort() 
         fileName = site + " " + shift  
         write_roster(fileName, fullRoster, callOffList, numberOfStaff, staff, rosterType)
-      
+    print("")
+    print("Completed roster for: {}.".format(site))  
     return fullRoster, staff, callOffList
 
 
@@ -101,11 +107,23 @@ def get_staff(filename, shift, site):
     staffList = []
     callOffList = []
     callOff = "CALL OFF"
+
+    # staff list 
+    savedPwd = os.getcwd()
+    os.chdir('../../../Downloads')
+    pwd = os.getcwd()
+
+    # print("Changing to directory: {} ".format(pwd))
+
+
     with open(filename, newline='') as csvfile:
         shiftsRoaster = csv.reader(csvfile, delimiter=',', quotechar='|')
         # process the rows from the input file
+        # print ("Found {} in {}".format(filename, pwd))
+        
         for row in shiftsRoaster:
             # strip out the quotes
+            
             
             roleFromFile        = row[4].strip('\"')
             shiftFromFile       = row[5].strip('\"')
@@ -123,12 +141,15 @@ def get_staff(filename, shift, site):
                             callOffList.append(fullName)
                         elif subjectFromFile != callOff:
                             staffList.append(fullName)
+        # print("Built staff list from: {}/{} with date of: {}".format(pwd,filename, dateFromFile))                        
         # get the date from the roster 
         shuffle(staffList)
         if len(callOffList) == 0:
             callOffList.insert(0,"No Call Offs")
         else:
             callOffList.insert(0,"Call Offs:")
+    os.chdir(savedPwd)
+    # print("Changed to directory: {} ".format(savedPwd))
 
     return staffList, callOffList
 
@@ -138,6 +159,17 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
     shiftName = roster_file
     today = date.today()
     d = today.strftime("%m/%d/%y")
+
+    # create the output folder on the users desktop
+    path = "/tmp/Automated-Rosters-" + d
+
+    try:
+        os.mkdir(path)
+    except OSError:
+        print ("Creation of the directory %s failed" % path)
+    else:
+        print ("Successfully created the directory %s " % path)
+
     # create either a csv or tabbed file
     if rosterType == 'csv':
         fileType = "{}, {}\n"
@@ -170,13 +202,34 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
 # Generate the shift roasters by placing the staff randomly in positions.
 # This will eliminate any bias as to where the staff is posted.
 # skb
+def get_input_date(filename):
+    dateFromFile = "Date not found in " + filename
+    savedPwd = os.getcwd()
+    os.chdir('../../../Downloads')
+    p = re.compile(r'^\d\d\d\d-\d\d-\d\d')
+    # p.match('2019-11-11')
+    # print( p.match('2019-11-11,'))
+
+    with open(filename, newline='') as csvfile:
+        shiftsRoaster = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in shiftsRoaster:
+            dateFromFile = row[2].strip('\"')
+            if p.match(dateFromFile):
+                break
+
+    os.chdir(savedPwd)
+    return dateFromFile
+
 
 def main():
-    print("*** Start ***")
+    print("*** Starting Roster Builder ***")
 
-    # staff list 
-    staff = "./input-files/ShiftboardShifts.csv" 
+    staffInput = 'ShiftboardShifts.csv'
 
+    # get shiftboard date
+    shiftboardDate = get_input_date(staffInput)
+    print("")
+    print("Process file: {} with date of {}".format(staffInput,shiftboardDate))
     # get the policies
     with open('./input-files/policy.json') as json_file:
         roster_policies = json.load(json_file)           
@@ -184,8 +237,8 @@ def main():
     policies =  roster_policies[0]["sites"]
 
     for sitePolicy in policies:
-        build_roster(sitePolicy['name'], staff, sitePolicy,rosterType='txt') 
+        build_roster(sitePolicy['name'], staffInput, sitePolicy,rosterType='txt') 
         
-    print("*** End ***")
+    print("*** Roster Builder End ***")
 if __name__ == "__main__":
   main()
