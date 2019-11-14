@@ -11,9 +11,8 @@ import re
 # and shift policies. 
 # 
 messageLog = []
-pathToHome = '../../../'
+pathToHome = os.getenv("HOME") + "/"
 # pathToHome = '../../'
-
 def build_roster(site, staff, sitePolicy, rosterType='txt'):
     staffFileName = staff
     write_to_log("Building Roster for: {}".format(site))
@@ -93,7 +92,7 @@ def build_vacant_roster(shift_roster, roster, priority):
 
                 for unit in mustFillPosts:
                     blank_roster[i].append(unit) # add unit column to the row
-                    blank_roster[i].append("Vacant") # add name column to the row
+                    blank_roster[i].append("SIS Assist") # add name column to the row
                     i += 1
                     if size != 0:
                         blank_roster.append([])
@@ -193,7 +192,7 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
 def get_input_date(filename):
     dateFromFile = "Date not found in " + filename
     savedPwd = os.getcwd()
-    os.chdir(pathToHome + 'Downloads')
+    os.chdir(pathToHome + '/Downloads')
 
     # look for the shiftboard date using regex
     p = re.compile(r'^\d\d\d\d-\d\d-\d\d')
@@ -228,8 +227,8 @@ def main():
     try:
         os.mkdir(path)
     except OSError:
-        pass
-        # print ("Rosters directirt already exists on users desktop")
+        # pSass
+        print ("Rosters directory already exists on users desktop")
     else:
         write_to_log("Successfully created the directory %s " % path)
     staffInput = 'ShiftboardShifts.csv'

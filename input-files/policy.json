@@ -4,23 +4,24 @@
             "name" : "Apple Park",
             "shifts" : [{
                 "name" : "5:00AM - 2:00PM",
-                "groups" :  [ {
-                    "name" : "Gates",
-                    "mustFillPosts" : ["Charlie 1","Charlie 2","Charlie 3"],
-                    "overflowPosts" : []
-                } , {
+                "groups" :  [   
+                {
                     "name" : "Booths",
-                    "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
+                    "mustFillPosts" : ["William 1/Charlie 1","William 2/Charlie 2","Charlie 1/William 1","Charlie 2/William 2","Tom 1", "Tom 2"],
                     "overflowPosts" : []
                 } , {
                     "name" : "Mobiles" ,
                     "mustFillPosts" : ["Paul 1", "Paul 2"],
-                    "overflowPosts" : ["Paul 3", "Paul 4","Paul 5"]
+                    "overflowPosts" : ["Paul 3", "Paul 4/Flex"]
                 } , {
                     "name" : "Edwards",
                     "mustFillPosts" : ["Edward 1","Edward 2"],
                     "overflowPosts" : ["Edward 3","Edward 4","Edward 5"]
-                } ]
+                } , {
+                    "name" : "Gates",
+                    "mustFillPosts" : [],
+                    "overflowPosts" : ["Ped Gate 1C","Ped Gate 5D","Ped Gate 7F","Ped Gate 5A","Lincoln 1","SIS Flex", "SIS Flex"]
+                 } ]
             } , {
                 "name" : "7:00AM - 4:00PM",
                 "groups" :  [ {
