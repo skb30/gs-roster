@@ -12,16 +12,17 @@ import re
 # 
 messageLog = []
 pathToHome = os.getenv("HOME") + "/"
-# pathToHome = '../../'
-def build_roster(site, staff, sitePolicy, rosterType='txt'):
-    staffFileName = staff
+
+
+def build_roster(site, shiftboard, sitePolicy, rosterType='txt'):
+    staffFileName = shiftboard
     write_to_log("Building Roster for: {}".format(site))
   
     for items in sitePolicy['shifts']:
 
         # get shift so we can build the staff list
         shift = items["name"]
-        staff, callOffList = get_staff(staffFileName, shift, site)
+        staff, callOffList, exceptions = get_staff(staffFileName, shift, site)
         numberOfStaff = len(staff)
         write_to_log("\tAvailable staff for shift {} is: {}".format(shift, numberOfStaff))
         mustFillRoster = build_vacant_roster(shift, sitePolicy, 1)
@@ -63,11 +64,11 @@ def build_roster(site, staff, sitePolicy, rosterType='txt'):
 
         fullRoster.sort() 
         fileName = site + " " + shift  
-        write_roster(fileName, fullRoster, callOffList, numberOfStaff, staff, rosterType)
+        write_roster(fileName, fullRoster, callOffList, exceptions, numberOfStaff, staff, rosterType)
     
     write_to_log("Completed roster for: {}.".format(site))  
     
-    return fullRoster, staff, callOffList
+    return 
 
 # called by build_roster
 # builds the roster based on the policy for that site and shift.
@@ -106,12 +107,13 @@ def build_vacant_roster(shift_roster, roster, priority):
 def get_staff(filename, shift, site):
     staffList = []
     callOffList = []
+    exceptions  = []
     callOff = "CALL OFF"
 
     # staff list 
     savedPwd = os.getcwd()
     os.chdir(pathToHome + 'Downloads')
-    pwd = os.getcwd()
+    # pwd = os.getcwd()
 
     # print("Changing to directory: {} ".format(pwd))
 
@@ -139,20 +141,37 @@ def get_staff(filename, shift, site):
                             callOffList.append(fullName)
                         elif subjectFromFile != callOff:
                             staffList.append(fullName)
+                    else:
+
+                        exceptions.append(site + ": " + fullName + " " + shiftFromFile)
         
-        # get the date from the roster 
+        
         shuffle(staffList)
         if len(callOffList) == 0:
             callOffList.insert(0,"No Call Offs")
         else:
             callOffList.insert(0,"Call Offs:")
+
+        if len(exceptions) > 0:
+            exceptions.insert(0,"Hourly Staff Exception List:")
     os.chdir(savedPwd)
 
-    return staffList, callOffList
+    return staffList, callOffList, exceptions 
+
+# DRY print helper     
+def writeExceptionList (f, exceptionList):
+    i=0
+    for name in exceptionList:
+        if i == 0:
+            f.write("{}\n".format(name))
+        else:
+            f.write("{}. {}\n".format(i, name))
+        i+=1
+    return
 
 # called by build_roster
 # write the filled in roster to either a csv or tab file. 
-def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterType='csv'):
+def write_roster(roster_file, roster, callOffList, exceptions, numberOfStaff, staff, rosterType='csv'):
     shiftName = roster_file
     today = date.today()
     d = today.strftime("%m/%d/%y")
@@ -168,16 +187,13 @@ def write_roster(roster_file, roster, callOffList, numberOfStaff, staff, rosterT
 
     roster_file = pathToHome + "Desktop/Rosters/" + roster_file + fileExtension
     with open(roster_file, 'w') as f:
-        f.write("{} , {}\n".format("Roster for " + shiftName, d))
+        f.write("{} , {}\n".format("Roster for " + shiftName, shiftboardDate))
         f.write("{}\n".format("Number Of Available Staff: " + str(numberOfStaff)))
         
-        i=0
-        for name in callOffList:
-            if i == 0:
-                f.write("{}\n".format(name))
-            else:
-                f.write("{}. {}\n".format(i, name))
-            i+=1
+        # call print helper
+        writeExceptionList(f, callOffList)
+        # writeExceptionList(f, exceptions)
+
         f.write(fileType.format("POST","NAME" ))
         for position in roster:
             f.write(fileType.format(position[0],position[1]))
@@ -219,7 +235,7 @@ def write_to_log(message):
 # This will eliminate any bias as to where the staff is posted.
 # skb
 def main():
-
+    global shiftboardDate 
     write_to_log("*** Auto generate rosters started ***")
 
     # create the output folder on the users desktop
@@ -231,10 +247,10 @@ def main():
         print ("Rosters directory already exists on users desktop")
     else:
         write_to_log("Successfully created the directory %s " % path)
-    staffInput = 'ShiftboardShifts.csv'
+    shiftboard = 'ShiftboardShifts.csv'
 
     # get shiftboard date
-    shiftboardDate = get_input_date(staffInput)
+    shiftboardDate = get_input_date(shiftboard)
   
     userInput = input("Process shiftboard " + shiftboardDate + " [y/n]? >")
     if userInput.lower() != 'y':
@@ -242,7 +258,7 @@ def main():
         return
 
    
-    write_to_log("Process file: {} with date of {}".format(staffInput,shiftboardDate))
+    write_to_log("Process file: {} with date of {}".format(shiftboard,shiftboardDate))
     # get the policies from json
     with open('./input-files/policy.json') as json_file:
         roster_policies = json.load(json_file)           
@@ -251,7 +267,7 @@ def main():
 
     # now process them
     for sitePolicy in policies:
-        build_roster(sitePolicy['name'], staffInput, sitePolicy,rosterType='txt') 
+        build_roster(sitePolicy['name'], shiftboard, sitePolicy,rosterType='txt') 
         
     write_to_log("*** Auto generator completed ***")
 

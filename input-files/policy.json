@@ -30,7 +30,7 @@
                     "overflowPosts" : ["George 1", "George 4","George 5","George 9"]
                 } , {
                         "name" : "Gates",
-                        "mustFillPosts" : ["Tantau 2"],
+                        "mustFillPosts" : ["Tom 2"],
                         "overflowPosts" : []
                 } , {
                     "name" : "Roberts",
@@ -53,7 +53,7 @@
                     "overflowPosts" : ["George 1", "George 4","George 5","George 7","George 8","George 9"]
                 } , {
                         "name" : "Gates",
-                        "mustFillPosts" : ["Tantau 2"],
+                        "mustFillPosts" : ["Tom 2"],
                         "overflowPosts" : []
                 } , {
                     "name" : "Roberts",
@@ -76,7 +76,7 @@
                     "overflowPosts" : []
             } , {
                     "name" : "Booths", 
-                    "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
+                    "mustFillPosts" : ["William  1","William  2","Tom 1"],
                     "overflowPosts" : []
             } , { 
                     "name" : "Mobiles" , 
@@ -91,7 +91,7 @@
                 "name" : "9:00PM - 6:00AM",
                 "groups" :  [ {
                     "name" : "Booths", 
-                    "mustFillPosts" : ["Wofle 1","Wofle 2","Tantau 1"],
+                    "mustFillPosts" : ["William  1","William  2","Tom 1"],
                     "overflowPosts" : []
             } , { 
                     "name" : "Mobiles" , 
@@ -158,7 +158,7 @@
 
         } ,{
 
-            "name" : "Wolfe Campus",
+            "name" : "WilliamCampus",
             "shifts" : [{
                 "name" : "7:00AM - 4:00PM",
                 "groups" :  [ {
