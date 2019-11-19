@@ -1,7 +1,7 @@
 from random import randrange, shuffle
 import csv
 import json
-from datetime import date
+from datetime import datetime
 import os
 import re
 
@@ -11,13 +11,12 @@ import re
 # and shift policies. 
 # 
 messageLog = []
-# pathToHome = os.getenv("HOME") + "/"
-
 
 def build_roster(pathToRosterFolder, site, shiftboard, shiftBoardDate, sitePolicy, rosterType='txt'):
     staffFileName = shiftboard
     staff = shiftboard
     write_to_log("Building Roster for: {}".format(site))
+    totalStaff = 0
   
     for items in sitePolicy['shifts']:
 
@@ -25,7 +24,9 @@ def build_roster(pathToRosterFolder, site, shiftboard, shiftBoardDate, sitePolic
         shift = items["name"]
         staff, callOffList = get_staff(staffFileName, shift, site)
         numberOfStaff = len(staff)
-        write_to_log("\tAvailable staff for shift {} is: {}".format(shift, numberOfStaff))
+        totalStaff += numberOfStaff
+        write_to_log("\tAvailable staff for %s: \t%2d" %(shift, numberOfStaff))
+        # write_to_log("\tAvailable staff for {}: {}".format(shift, numberOfStaff))
         mustFillRoster = build_vacant_roster(shift, sitePolicy, 1)
         overFlowRoster = build_vacant_roster(shift, sitePolicy, 2)
 
@@ -72,6 +73,7 @@ def build_roster(pathToRosterFolder, site, shiftboard, shiftBoardDate, sitePolic
         fillRoster.sort() 
         fileName = site + " " + shift  
         write_roster(pathToRosterFolder, fileName, fillRoster, callOffList, numberOfStaff, unassigned, shiftBoardDate, rosterType)
+    write_to_log("Total staff assigned to {}: {}".format(site, totalStaff))  
     write_to_log("Completed roster for: {}.".format(site))  
     return 
 
@@ -109,7 +111,6 @@ def build_vacant_roster(shift_roster, roster, priority):
 # called by build_roster
 # create a list of staff and a list of call offs from Shift Board input file.
 # These lists will be used as input to build_roaster 
-
 def get_staff(shiftBoardRoster, shift, site):
 
     staffList = []
@@ -157,12 +158,8 @@ def writeExceptionList (f, exceptionList):
     return
 
 # called by build_roster
-# write the filled in roster to either a csv or tab file. 
+# write the filled in roster to either a csv or tabbed file. 
 def write_roster(pathToRosterFolder, shiftName, roster, callOffList, numberOfStaff, unassignedStaff, shiftBoardDate, rosterType='csv'):
-    
-    # today = date.today()
-    # d = today.strftime("%m/%d/%y")
-
 
     # create either a csv or tabbed file
     if rosterType == 'csv':
@@ -198,9 +195,6 @@ def get_input_date(shiftBoardRoster):
 
     # look for the shiftboard date using regex
     p = re.compile(r'^\d\d\d\d-\d\d-\d\d')
-    # p.match('2019-11-11')
-    # print( p.match('2019-11-11,'))
-
 
     for row in shiftBoardRoster:
         dateFromFile = row[2].strip('\"')
@@ -220,16 +214,11 @@ def create_output_folder(path):
     try:
         os.mkdir(path)
     except OSError:
-        # pSass
         print ("Rosters directory already exists on users desktop")
     else:
         write_to_log("Successfully created the directory %s " % path)
    
-
-
-# Generate the shift roasters by placing the staff randomly in positions.
-# This will eliminate any bias as to where the staff is posted.
-# skb
+    return
 
 def load_input(filename, shiftBoardRoster, inputFolder = 'Downloads' ):
 
@@ -246,10 +235,15 @@ def load_input(filename, shiftBoardRoster, inputFolder = 'Downloads' ):
     os.chdir(savedPwd)
     return shiftBoardRoster
 
-
+# Generate the shift roasters by placing the staff randomly in positions.
+# This will eliminate any bias as to where the staff is posted.
+# skb
 def main():
 
-    
+    dateTimeObj = datetime.now()
+    timestampStr = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S)")
+    write_to_log("*** Auto Generate Rosters Started {} ***".format(timestampStr))
+
     # get the policies from json
     with open('./input-files/policy.json') as json_file:
         roster_policies = json.load(json_file)
@@ -258,32 +252,30 @@ def main():
     pathToRosterFolder = pathToHome + "Desktop/Rosters/"
     create_output_folder(pathToRosterFolder)
 
-    shiftBoardRoster = []
-    write_to_log("*** Auto generate rosters started ***")
-    shiftBoardInput = 'ShiftboardShifts.csv'
-    shiftBoardRoster = load_input(shiftBoardInput, shiftBoardRoster)
-    shiftBoardDate = get_input_date(shiftBoardRoster)
+    shiftBoardRoster    = []
+    shiftBoardInput     = 'ShiftboardShifts.csv'
+    shiftBoardRoster    = load_input(shiftBoardInput, shiftBoardRoster)
+    shiftBoardDate      = get_input_date(shiftBoardRoster)
   
-    userInput = input("Process shiftboard " + shiftBoardDate + " [y/n]? >")
+    userInput = input("Process shiftboard file dated: " + shiftBoardDate + " Proceed[y/n]? >")
     if userInput.lower() != 'y':
         write_to_log("*** Auto generate rosters ended ***")
         return  
 
-    # contains the policies for fulling posts at each site
+    # contains the policies for filling posts at each site
     policies =  roster_policies[0]["sites"]
 
     # now that we have the polices for each site lets process them
     for sitePolicy in policies:
         build_roster(pathToRosterFolder, sitePolicy['name'], shiftBoardRoster, shiftBoardDate, sitePolicy, rosterType='txt') 
-        
 
-        
-    write_to_log("*** Auto generator completed ***")
 
     # add the console log to rosters folder
     with open(pathToHome + "Desktop/Rosters/roster-log.txt", 'w') as f:
         f.write("Console Log\n")
         for row in messageLog:
             f.write(row + "\n")
+
+    write_to_log("*** Auto generator completed ***")
 if __name__ == "__main__":
   main()
