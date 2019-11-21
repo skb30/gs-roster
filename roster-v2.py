@@ -13,11 +13,14 @@ import re
 messageLog = []
 
 def build_roster(pathToRosterFolder, site, shiftboard, shiftBoardDate, sitePolicy, rosterType='txt'):
+
+
     staffFileName = shiftboard
     staff = shiftboard
-    write_to_log("Building Roster for: {}".format(site))
+    write_to_log("Building Roster for: {}\n".format(site))
     totalStaff = 0
-  
+    
+   
     for items in sitePolicy['shifts']:
 
         # get shift so we can build the staff list
@@ -25,7 +28,7 @@ def build_roster(pathToRosterFolder, site, shiftboard, shiftBoardDate, sitePolic
         staff, callOffList = get_staff(staffFileName, shift, site)
         numberOfStaff = len(staff)
         totalStaff += numberOfStaff
-        write_to_log("\tAvailable staff for %s: \t%2d" %(shift, numberOfStaff))
+        write_to_log("\t%2d staff available for %s" %(numberOfStaff, shift))
         # write_to_log("\tAvailable staff for {}: {}".format(shift, numberOfStaff))
         mustFillRoster = build_vacant_roster(shift, sitePolicy, 1)
         overFlowRoster = build_vacant_roster(shift, sitePolicy, 2)
@@ -69,13 +72,14 @@ def build_roster(pathToRosterFolder, site, shiftboard, shiftBoardDate, sitePolic
             while len(staff): 
                 unassigned.append(staff.pop())
                     
-
         fillRoster.sort() 
         fileName = site + " " + shift  
         write_roster(pathToRosterFolder, fileName, fillRoster, callOffList, numberOfStaff, unassigned, shiftBoardDate, rosterType)
-    write_to_log("Total staff assigned to {}: {}".format(site, totalStaff))  
-    write_to_log("Completed roster for: {}.".format(site))  
-    return 
+   
+    write_to_log("\nTotal staff assigned to {}: {}".format(site, totalStaff))  
+    write_to_log("Completed roster for: {}.\n".format(site)) 
+
+    return totalStaff
 
 
 # called by build_roster
@@ -147,13 +151,17 @@ def get_staff(shiftBoardRoster, shift, site):
     return staffList, callOffList, 
 
 # DRY print helper     
-def writeExceptionList (f, exceptionList):
+def write_exception_list (f, exceptionList):
     i=0
+    if len(exceptionList) >  1: #bump over first element
+        write_to_log("\t\tCall Offs:")
+
     for name in exceptionList:
         if i == 0:
             f.write("{}\n".format(name))
         else:
             f.write("{}. {}\n".format(i, name))
+            write_to_log("\t\t{}. {}".format(i, name))
         i+=1
     return
 
@@ -175,8 +183,7 @@ def write_roster(pathToRosterFolder, shiftName, roster, callOffList, numberOfSta
         f.write("{}\n".format("Number Of Available Staff: " + str(numberOfStaff)))
         
         # call print helper
-        writeExceptionList(f, callOffList)
-        # writeExceptionList(f, exceptions)
+        write_exception_list(f, callOffList)
 
         f.write(fileType.format("POST","NAME" ))
         for position in roster:
@@ -214,9 +221,9 @@ def create_output_folder(path):
     try:
         os.mkdir(path)
     except OSError:
-        print ("Rosters directory already exists on users desktop")
+        print ("--- [Rosters] directory already exists on users desktop ---\n")
     else:
-        write_to_log("Successfully created the directory %s " % path)
+        write_to_log("--- Successfully created the directory %s ---" % path)
    
     return
 
@@ -239,10 +246,10 @@ def load_input(filename, shiftBoardRoster, inputFolder = 'Downloads' ):
 # This will eliminate any bias as to where the staff is posted.
 # skb
 def main():
-
+    totalStaffAssigned = 0 
     dateTimeObj = datetime.now()
     timestampStr = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S)")
-    write_to_log("*** Auto Generate Rosters Started {} ***".format(timestampStr))
+    write_to_log("\n*** Auto Generate Rosters Started {} *** \n".format(timestampStr))
 
     # get the policies from json
     with open('./input-files/policy.json') as json_file:
@@ -267,15 +274,16 @@ def main():
 
     # now that we have the polices for each site lets process them
     for sitePolicy in policies:
-        build_roster(pathToRosterFolder, sitePolicy['name'], shiftBoardRoster, shiftBoardDate, sitePolicy, rosterType='txt') 
+       totalStaffAssigned +=  build_roster(pathToRosterFolder, sitePolicy['name'], shiftBoardRoster, shiftBoardDate, sitePolicy, rosterType='txt') 
 
-
+    write_to_log("Total staff assgined: {}".format(totalStaffAssigned))
+    
     # add the console log to rosters folder
     with open(pathToHome + "Desktop/Rosters/roster-log.txt", 'w') as f:
         f.write("Console Log\n")
         for row in messageLog:
             f.write(row + "\n")
 
-    write_to_log("*** Auto generator completed ***")
+    write_to_log("*** Auto generator completed ***\n")
 if __name__ == "__main__":
   main()
